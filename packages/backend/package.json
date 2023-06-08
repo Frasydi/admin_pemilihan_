@@ -1,0 +1,37 @@
+{
+  "name": "admin_pemilihan_backend",
+  "version": "1.0.0",
+  "main": "server.ts",
+  "license": "MIT",
+  "scripts": {
+    "start": "ts-node server.ts",
+    "dev": "ts-node-dev server.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.15.0",
+    "@types/bcrypt": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.2",
+    "bcrypt": "^5.1.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "formidable": "^2.1.1",
+    "jsonwebtoken": "^9.0.0",
+    "sharp": "^0.32.1",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "tsc": "^2.0.4",
+    "typescript": "^5.1.3",
+    "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.3",
+    "@types/express": "^4.17.17",
+    "@types/formidable": "^2.0.6",
+    "@types/node": "^20.2.5",
+    "@types/sharp": "^0.32.0",
+    "nodemon": "^2.0.22",
+    "prisma": "^4.15.0"
+  }
+}

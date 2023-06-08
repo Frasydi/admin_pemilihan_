@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model kandidat {
+   id Int @id @default(autoincrement())
+  nik String @unique
+  nama String 
+  alamat String
+  kelurahan String
+  kecamatan String
+  pemilih Pemilih[]
+  tim Tim[]
+  gambar String?
+}
+
+model Pemilih {
+  id Int @id @default(autoincrement())
+  nik            String @unique
+  nkk            String @unique
+  nama           String
+  jenis_kelamin   Jenis_Kelamin
+  alamat         String
+  rt             String
+  rw             String
+  kelurahan      String
+  kecamatan      String
+  kandidatId Int? 
+  kandidat kandidat? @relation(fields: [kandidatId], references: [id])
+  anggota_tim Anggota_Tim?
+}
+
+enum Jenis_Kelamin {
+  L
+  P
+}
+
+model Anggota_Tim {
+  id             Int      @id @default(autoincrement())
+  pemilih_id Int @unique
+  pemilih Pemilih? @relation(fields: [pemilih_id], references: [id])
+  tim_id Int
+  tim Tim @relation(fields: [tim_id], references: [id], onDelete: Cascade)
+}
+
+model Tim {
+  id Int @id @default(autoincrement())
+  nama String @unique
+  anggota_tim Anggota_Tim[]
+  kecamatan String 
+  kandidatId Int
+  kandidat kandidat @relation(fields: [kandidatId], references: [id] , onDelete: Cascade)
+}
+
+model user {
+  id Int @id @default(autoincrement())
+  username String @unique
+  password String 
+  role String
+}
