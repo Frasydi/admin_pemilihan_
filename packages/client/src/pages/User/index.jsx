@@ -81,7 +81,7 @@ export default function User() {
                     <Grid item>
 
                         <CustomTable>
-                            <TableHead sx={{ backgroundColor: "#292D2E" }}>
+                            <TableHead sx={{ backgroundColor: "#99001a" }}>
                                 <TableRow>
                                     <CustomCell>#</CustomCell>
                                     <CustomCell>Username</CustomCell>

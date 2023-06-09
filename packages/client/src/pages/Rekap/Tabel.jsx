@@ -33,7 +33,7 @@ export default function RekapTable({ data }) {
         <Box sx={{width:"75vw", overflow:"auto"}}>
 
             <CustomTable>
-                <TableHead sx={{ backgroundColor: "#292D2E" }}>
+                <TableHead sx={{ backgroundColor: "#99001a" }}>
                     <TableRow>
                         <CustomCell>#</CustomCell>
                         <CustomCell>Nama Kandidat</CustomCell>
