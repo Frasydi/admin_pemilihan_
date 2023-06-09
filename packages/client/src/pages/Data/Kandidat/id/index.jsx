@@ -5,7 +5,7 @@ import useFetch from "../../../../hooks/useFetch";
 export  function SingleKandidat() {
     const params = useParams()
     const rout = useNavigate()
-    const {data, isLoading, isError} = useFetch("/api/kandidat/"+(params.id || ""))
+    const {data, isLoading, isError} = useFetch("/api/kandidat/single/"+(params.id || ""))
     if(isLoading) {
         return <>
         </>

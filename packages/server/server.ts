@@ -44,7 +44,7 @@ app.get("/gambar/*", (req: Request<{ 0: string }>, res) => {
     const imageFilePath = path.join(__dirname, 'gambar', name);
     res.sendFile(imageFilePath);
 })
-app.listen(3000, () => {
-    console.log("listening on http://localhost:3000")
+app.listen(3379, () => {
+    console.log("listening on http://localhost:3379")
 
 })

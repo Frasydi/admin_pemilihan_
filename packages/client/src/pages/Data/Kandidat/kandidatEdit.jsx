@@ -106,7 +106,7 @@ export default function KandidatEdit() {
                                     size="small"
                                     error={!!errors.kecamatan}
                                     helperText={errors.kecamatan?.message}
-                                    defaultValue={""}
+                                    defaultValue={kandidathook.selkandidat.kecamatan}
                                     {...register("kecamatan")}
                                 >
                                     {
@@ -120,14 +120,14 @@ export default function KandidatEdit() {
                         </Grid>
                         <Grid item>
                         <FormControl fullWidth>
-                                <InputLabel id="kecamatan-id">Kelurahan</InputLabel>
+                                <InputLabel id="kelurahan-id">Kelurahan</InputLabel>
                                 <Select
-                                    labelId="kecamatan-id"
+                                    labelId="kelurahan-id"
                                     label="Kelurahan"
                                     size="small"
                                     error={!!errors.kelurahan}
                                     helperText={errors.kelurahan?.message}
-                                    
+                                    defaultValue={kandidathook.selkandidat.kelurahan}
                                     {...register("kelurahan")}
                                 >
                                     {

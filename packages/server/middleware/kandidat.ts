@@ -17,7 +17,7 @@ KandidatRouter.get("/recap", AuthMiddleware, async(req, res) => {
 })
 
 
-KandidatRouter.get("/:id", AuthMiddleware, async(req,res) => {
+KandidatRouter.get("/single/:id", AuthMiddleware, async(req,res) => {
     const result = await SingleKandidat(parseInt(req.params.id))
     return res.status(result.code).json(result)
 })
