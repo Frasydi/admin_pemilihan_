@@ -15,7 +15,7 @@ export default function Selamat_Datang() {
         }
     }, [])
     return (
-        <Card elevation={4} sx={{ width: "75vw", padding: "3rem", background: 'linear-gradient(to right, #83D475, #57C84D)' }} >
+        <Card elevation={4} sx={{ width: "75vw", padding: "3rem", background: 'linear-gradient(to right, #99001a, #f00707)' }} >
             <CardContent sx={{ color: "whitesmoke" }}>
                 <Grid container direction="column" spacing={2}>
                     <Grid item>

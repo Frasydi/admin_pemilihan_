@@ -1,5 +1,5 @@
 import formidable from "formidable";
-import {SingleKandidat, addKandidat, editKandidat, hapusKandidat, queryKandidat} from "../controller/kandidat"
+import {RecapData, SingleKandidat, addKandidat, editKandidat, hapusKandidat, queryKandidat} from "../controller/kandidat"
 import { Router } from "express";
 import { AuthMiddleware } from "../util/auth";
 
@@ -9,6 +9,13 @@ KandidatRouter.get("/", AuthMiddleware,async (req, res) => {
     const result = await queryKandidat(req.query.search as string)
     return res.status(result.code).json(result)
 })
+
+
+KandidatRouter.get("/recap", AuthMiddleware, async(req, res) => {
+    const result = await RecapData()
+    return res.status(result.code).json(result)   
+})
+
 
 KandidatRouter.get("/:id", AuthMiddleware, async(req,res) => {
     const result = await SingleKandidat(parseInt(req.params.id))

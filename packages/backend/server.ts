@@ -10,6 +10,21 @@ import PemilihRouter from "./middleware/pemilih";
 import TimRouter from "./middleware/tim";
 import UtilRouter from "./middleware/util";
 import AnggotaTimRout from "./middleware/anggota";
+import prisma from "./prisma/prisma";
+import { Register } from "./controller/user";
+
+(async () => {
+    const user = await prisma.user.count();
+    if(user > 0) return 
+    console.log("Create First Admin")
+    await Register({
+        username : process.env.SUPER_USER || "",
+        password : process.env.SUPER_PASSWORD || "",
+        role : "super_admin"
+    })
+}
+)()
+
 const app = express();
 
 app.use(cookieParser())

@@ -112,7 +112,7 @@ export default function TambahAnggota({refetch}) {
                                         }} />
                                     </TableCell>
                                     <TableCell>
-                                        {item.id}
+                                        {ind+1}
                                     </TableCell>
                                     {
                                         dptkeys.map(key => (

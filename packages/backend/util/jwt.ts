@@ -8,7 +8,7 @@ export function createToken(user : {id : number, username : string, password : s
     return token
 }
 
-export function verifyToken(token : string) : {message : string, status : boolean, decoded? : {username : string, id : number}} {
+export function verifyToken(token : string) : {message : string, status : boolean, decoded? : {username : string, id : number, role : string}} {
     try {
         const decoded : any = jwt.verify(token, process.env.SECRET_KEY || "");
         return {

@@ -12,6 +12,8 @@ import DPTData from "./pages/Data/DPT";
 import { SingleKandidat } from "./pages/Data/Kandidat/id";
 import KandidatTimKecamatan from "./pages/Data/Kandidat/id/Tim";
 import AnggotaTim from "./pages/Data/Kandidat/id/Tim/Anggota";
+import Recap from "./pages/Rekap";
+import UserProfile from "./pages/Profile";
 
 const router = createBrowserRouter([
   {
@@ -71,6 +73,19 @@ const router = createBrowserRouter([
       {
         path : "/anggota/:id",
         element : <AnggotaTim/>
+      },
+      {
+        path : "/rekap",
+        children : [
+          {
+            index : true,
+            element : <Recap/>
+          }
+        ]
+      },
+      {
+        path : "/profile",
+        element : <UserProfile/>
       }
     ]
   },

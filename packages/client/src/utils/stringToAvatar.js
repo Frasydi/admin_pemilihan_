@@ -1,4 +1,4 @@
-export default function stringAvatar(name) {
+export default function stringAvatar(name, style) {
     let nama = name.split(' ')
 
     if(nama.length > 2) {
@@ -8,7 +8,8 @@ export default function stringAvatar(name) {
     return {
         sx: {
             bgcolor: stringToColor(name),
-            cursor : "pointer"
+            cursor : "pointer",
+            ...style
         },
         children: `${nama}`,
     };

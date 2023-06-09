@@ -3,8 +3,6 @@ import { Box, CircularProgress, Grid, ThemeProvider, Typography, createTheme } f
 import Sidebar from "../Sidebar";
 import PropTypes from "prop-types"
 import NavBar from "../Navbar";
-import { useNavigate } from "react-router-dom";
-
 
 const theme = createTheme({
     typography: {

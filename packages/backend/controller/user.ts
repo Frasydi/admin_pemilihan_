@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { LoginUser, RegisterUser } from "../service/user";
+import { LoginUser, RegisterUser, changeUserPassword } from "../service/user";
 import { verifyToken } from "../util/jwt";
-import { IUser, IuserAdd, Zuser, ZuserAdd } from "../types/IUser";
+import { IUser, IUserNewPassword, IuserAdd, ZUserNewPassword, Zuser, ZuserAdd } from "../types/IUser";
 import { IResult } from "../types/Iresult";
 
 
@@ -23,6 +23,7 @@ export async function Login(data: IUser): IResult<{
     user: {
         id: number;
         username: string;
+        role : string;
     };
 }> {
     const validation = Zuser.safeParse(data)
@@ -60,8 +61,28 @@ export async function Auth(token : string) {
         message: auth.message,
         data: {
             username: auth.decoded?.username || "",
-            id: auth.decoded?.id || ""
+            id: auth.decoded?.id || -1,
+            role : auth.decoded?.role || ""
         }
     }
 
+}
+
+export async function changePassword(pass : IUserNewPassword, id : number) : IResult<null> {
+    if(z.number().nonnegative().int().safeParse(id).success === false) return {
+        status : false,
+        code : 400,
+        message : "id is not a number"
+    }
+
+    const validation = ZUserNewPassword.safeParse(pass)
+    if(validation.success === false) {
+        return {
+            status : false,
+            code : 400,
+            message : validation.error.issues[0].path + " : " + validation.error.issues[0].message,
+        }
+    }
+
+    return await changeUserPassword(pass, id)
 }

@@ -1,0 +1,16 @@
+Biru Terang:
+
+Biru: #007bff
+Merah: #ff0000
+Biru Tua:
+
+Biru: #0000ff
+Merah: #ff0000
+Biru Laut:
+
+Biru: #1f6eff
+Merah: #ff0000
+Merah Muda:
+
+Biru: #ff6ac9
+Merah: #ff0000

@@ -1,17 +1,18 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Button, Drawer, Grid, TextField, Typography } from "@mui/material"
+import { Box, Button, Drawer, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material"
 import PropTypes from "prop-types"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form";
 import z from "zod";
 import useKandidat from "./useKandidat";
+import { kelurahan } from "../../../utils/dataUtil";
 export default function KandidatEdit() {
     const fileRef = useRef(null)
     const [image, setImage] = useState(null)
     const [open, setOpen] = useState(false)
 
     const kandidathook = useKandidat()
-    const { register, handleSubmit, setError,setValue,formState: { errors } } = useForm({
+    const { register, handleSubmit, watch,setError,setValue,formState: { errors } } = useForm({
         mode: "onBlur",
         resolver: zodResolver(z.object({
             nik: z.string().nonempty(),
@@ -49,7 +50,15 @@ export default function KandidatEdit() {
         setOpen(false)
     }
 
-    
+    const watchKecamatan = watch("kecamatan")
+    const kelurahan2 = useMemo(() => {
+        const indexOf = kelurahan.findIndex(el => el.kecamatan == watchKecamatan);
+        console.log(indexOf)
+        if (indexOf == -1) return []
+        const result = kelurahan[indexOf]?.kelurahan
+        console.log(result)
+        return result
+    }, [watchKecamatan])
 
     return (
         <>
@@ -89,15 +98,48 @@ export default function KandidatEdit() {
                                 helperText={errors.alamat?.message} />
                         </Grid>
                         <Grid item>
-                            <TextField label="Kelurahan" size="small" {...register("kelurahan")}
-                                error={!!errors.kelurahan}
-                                helperText={errors.kelurahan?.message} />
+                            <FormControl fullWidth>
+                                <InputLabel id="kecamatan-id">Kecamatan</InputLabel>
+                                <Select
+                                    labelId="kecamatan-id"
+                                    label="Age"
+                                    size="small"
+                                    error={!!errors.kecamatan}
+                                    helperText={errors.kecamatan?.message}
+                                    defaultValue={""}
+                                    {...register("kecamatan")}
+                                >
+                                    {
+                                        kelurahan.map(el => (
+                                            <MenuItem key={el.kecamatan} value={el.kecamatan}>
+                                                {el.kecamatan}</MenuItem>
+                                        ))
+                                    }
+                                </Select>
+                            </FormControl>
                         </Grid>
                         <Grid item>
-                            <TextField label="Kecamatan" size="small" {...register("kecamatan")}
-                                error={!!errors.kecamatan}
-                                helperText={errors.kecamatan?.message} />
-                        </Grid>
+                        <FormControl fullWidth>
+                                <InputLabel id="kecamatan-id">Kelurahan</InputLabel>
+                                <Select
+                                    labelId="kecamatan-id"
+                                    label="Kelurahan"
+                                    size="small"
+                                    error={!!errors.kelurahan}
+                                    helperText={errors.kelurahan?.message}
+                                    
+                                    {...register("kelurahan")}
+                                >
+                                    {
+                                        kelurahan2?.map(el => (
+                                            <MenuItem key={el} value={el}>
+                                                {el}</MenuItem>
+                                        ))
+                                    }
+                                    
+                                </Select>
+                            </FormControl>
+                            </Grid>
                         <Grid item>
 
                             <input

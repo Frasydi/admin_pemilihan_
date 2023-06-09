@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { delKandidat, getKandidatSearch, getSingleKandidat, postKandidat, putKandidat } from "../service/kandidat";
+import { DataRecap, delKandidat, getKandidatSearch, getSingleKandidat, postKandidat, putKandidat } from "../service/kandidat";
 import { IResult } from "../types/Iresult";
 import { kandidat } from "@prisma/client";
 import { IKandidatAdd, ZKandidatAdd } from "../types/IKandidat";
@@ -83,4 +83,8 @@ export async function hapusKandidat(id : number) : IResult<null> {
     }
 
     return await delKandidat(id)
+}
+
+export async function RecapData() :IResult<any> {
+    return await DataRecap()
 }

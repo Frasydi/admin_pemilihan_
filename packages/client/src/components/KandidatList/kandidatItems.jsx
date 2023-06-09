@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom"
 
 
 
-export default function KandidatItem({ item,ind }) {
+export default function KandidatItem({ item }) {
     const kandidat = useKandidat()
     const rout = useNavigate()
     return (

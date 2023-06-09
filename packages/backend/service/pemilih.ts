@@ -180,12 +180,8 @@ export async function selectPemilih(id: number, search: string) {
             where: {
                 AND: [
                     {
-
-                        NOT: {
-                            anggota_tim: {
-                                tim_id: id
-                            },
-                        },
+                     anggota_tim : null
+                
                     },
                     {
 
@@ -232,6 +228,38 @@ export async function selectPemilih(id: number, search: string) {
             status: false,
             code: 500,
             message: "Server Error",
+        }
+    }
+}
+
+export async function addManyPemilih(pemilih : IPemilihAdd[]) {
+    try {
+
+        const promises = pemilih.map(async(el) => {
+            try {
+
+                const result = await prisma.pemilih.create({
+                    data : el
+                })
+                return result
+            }catch(err) {
+                
+            }
+        })
+
+        await Promise.all(promises)
+
+        return {
+            status : true,
+            code : 200,
+            message : "Ok"
+        }
+    }catch(err) {
+        console.log(err)
+        return {
+            status : false,
+            code : 200,
+            message : "Server error"
         }
     }
 }

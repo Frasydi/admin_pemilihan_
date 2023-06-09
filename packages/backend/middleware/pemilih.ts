@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { AllPemilih, addPemilih, changePemilihKandidat, editPemilih, mencariPemilih, removePemilih } from "../controller/pemilih";
+import { AllPemilih, addPemilih, changePemilihKandidat, editPemilih, insertManyPemilih, mencariPemilih, removePemilih } from "../controller/pemilih";
 
 const PemilihRouter = Router()
 
@@ -31,6 +31,11 @@ PemilihRouter.put("/memilih/:id", async(req,res) => {
 
 PemilihRouter.get("/select/:id", async(req,res) => {
     const result = await mencariPemilih(parseInt(req.params.id), req.query.search as string|| "")
+    return res.status(result.code).json(result)
+})
+
+PemilihRouter.post("/many", async(req,res) => {
+    const result = await insertManyPemilih(req.body)
     return res.status(result.code).json(result)
 })
 

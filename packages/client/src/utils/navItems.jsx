@@ -1,16 +1,17 @@
 import { RxDashboard } from "react-icons/rx"
 import {BsFillDatabaseFill} from "react-icons/bs"
-import {IoIosPeople} from "react-icons/io"
+import {ImLoop} from "react-icons/im" 
+
 export const navItems = [
     {
         label : "Dashboard",
         path : "/",
-        icon : <RxDashboard/>
+        Icon : RxDashboard
     },
     {
         label : "Master",
         path : "/data",
-        icon : <BsFillDatabaseFill/>,
+        Icon : BsFillDatabaseFill,
         children : [
             {
                 label : "Data Kandidat",
@@ -21,5 +22,10 @@ export const navItems = [
                 path : "/data/pemilih"
             }
         ]
+    },
+    {
+        label : "Rekap",
+        path : "/rekap",
+        Icon : ImLoop
     }
 ]

@@ -1,8 +1,9 @@
-import { Button, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
+import { Button, TableBody, TableHead, TableRow } from "@mui/material";
 import PropTypes from "prop-types"
 import { useTim } from ".";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { CustomCell, CustomTable } from "../../../Pemilih";
 
 export default function TableTim({ data, header, keys }) {
     const tim = useTim()
@@ -36,11 +37,11 @@ export default function TableTim({ data, header, keys }) {
 
     return (
         <>
-            <Table>
-                <TableHead>
+            <CustomTable> 
+                <TableHead sx={{ backgroundColor: '#99001a' }}>
                     <TableRow>
                         {header?.map((item) => (
-                            <TableCell key={item}>{item}</TableCell>
+                            <CustomCell key={item}>{item}</CustomCell>
                         ))}
                     </TableRow>
                 </TableHead>
@@ -50,13 +51,13 @@ export default function TableTim({ data, header, keys }) {
                     {
                         data?.map((item, ind) => (
                             <TableRow key={item.id}>
-                                <TableCell>
+                                <CustomCell>
                                     {ind + 1}
-                                </TableCell>
+                                </CustomCell>
                                 {keys?.map((key) => {
                                     if (key == "action") {
                                         if (tim.typeName == "Kecamatan") {
-                                            return (<TableCell key={key}>
+                                            return (<CustomCell key={key}>
                                                 <Button onClick={() => {
                                                     tim.setTypeName("Kelurahan")
                                                     tim.setType("/"+item.kecamatan)
@@ -64,10 +65,10 @@ export default function TableTim({ data, header, keys }) {
                                                 }}>
                                                     Daftar Kelurahan
                                                 </Button>
-                                            </TableCell>)
+                                            </CustomCell>)
                                         } else {
                                             return (
-                                            <TableCell key={key}>
+                                            <CustomCell key={key}>
                                                 <Button color="error" onClick={() => {
                                                     deleteTim(item.id)
                                                 }}>
@@ -85,11 +86,11 @@ export default function TableTim({ data, header, keys }) {
                                                 }}>
                                                     Detail
                                                 </Button>
-                                            </TableCell>)
+                                            </CustomCell>)
                                         }
                                     }
                                     return (
-                                        <TableCell key={key}>{item[key]}</TableCell>
+                                        <CustomCell key={key}>{item[key]}</CustomCell>
                                     )
                                 })}
 
@@ -98,7 +99,7 @@ export default function TableTim({ data, header, keys }) {
                     }
 
                 </TableBody>
-            </Table>
+            </CustomTable>
         </>
 
     )

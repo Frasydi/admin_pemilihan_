@@ -5,7 +5,7 @@ import useFetch from "../../../../hooks/useFetch";
 export  function SingleKandidat() {
     const params = useParams()
     const rout = useNavigate()
-    const {data, isLoading, refetch, isError} = useFetch("/api/kandidat/"+(params.id || ""))
+    const {data, isLoading, isError} = useFetch("/api/kandidat/"+(params.id || ""))
     if(isLoading) {
         return <>
         </>
@@ -53,7 +53,8 @@ export  function SingleKandidat() {
                                         <Grid container spacing={2}>
                                             <Grid item xs={3}>
                                                 <Button  
-                                                variant="contained"
+                                                variant="text"
+                                                size="small"
                                                 onClick={() => {
                                                     rout("/tim/"+data.id)
                                                 }}

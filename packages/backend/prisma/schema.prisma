@@ -34,7 +34,7 @@ model Pemilih {
   kelurahan      String
   kecamatan      String
   kandidatId Int? 
-  kandidat kandidat? @relation(fields: [kandidatId], references: [id])
+  kandidat kandidat? @relation(fields: [kandidatId], references: [id], onDelete: Cascade)
   anggota_tim Anggota_Tim?
 }
 
@@ -46,14 +46,14 @@ enum Jenis_Kelamin {
 model Anggota_Tim {
   id             Int      @id @default(autoincrement())
   pemilih_id Int @unique
-  pemilih Pemilih? @relation(fields: [pemilih_id], references: [id])
+  pemilih Pemilih? @relation(fields: [pemilih_id], references: [id], onDelete: Cascade)
   tim_id Int
   tim Tim @relation(fields: [tim_id], references: [id], onDelete: Cascade)
 }
 
 model Tim {
   id Int @id @default(autoincrement())
-  nama String @unique
+  nama String 
   anggota_tim Anggota_Tim[]
   kecamatan String 
   kandidatId Int

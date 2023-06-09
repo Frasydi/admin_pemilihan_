@@ -1,9 +1,15 @@
-import { Router } from "express";
-import { Auth, Login, Register } from "../controller/user";
+import { Response, Router } from "express";
+import { Auth, Login, Register, changePassword } from "../controller/user";
+import { AuthMiddleware, CustomRequest } from "../util/auth";
 
 const UserRouter = Router()
-
-UserRouter.post("/register", async (req,res) => {
+UserRouter.post("/register", AuthMiddleware ,async (req ,res : Response) => {
+    //@ts-ignore
+    if(req.auth.role !== "super_admin") return res.status(403).json({
+        message : "You are not allowed to access this",
+        code : 403,
+        status : false
+    })
     const result = await Register(req.body)
     return res.status(result.code).json(result)
 })
@@ -33,4 +39,11 @@ UserRouter.get("/auth", async (req,res) => {
     return res.status(result.code).json(result)
 })
 
+UserRouter.put("/changePassword/:id", AuthMiddleware,async (req, res) => {
+    const result = await changePassword(req.body, parseInt(req.params.id))
+    if(result.status) {
+        return res.cookie("token", "", {maxAge : 0}).status(result.code).json(result)
+    }
+    return res.status(result.code).json(result)
+})
 export default UserRouter

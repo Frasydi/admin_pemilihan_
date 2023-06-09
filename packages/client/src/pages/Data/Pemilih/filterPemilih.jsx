@@ -31,7 +31,12 @@ export default function FilterPemilih({ filter, setFilter }) {
 
     return (
         <>
-            <Button onClick={() => {
+            <Button variant="contained" sx={{
+                backgroundColor:"#83b8f2",
+                "&:hover" : {
+                    backgroundColor:"#6B98CB"
+                }
+            }} onClick={() => {
                 setOpen(true)
             }}>
                 Filter

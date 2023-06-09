@@ -1,4 +1,4 @@
-import { Box, Grid, List, Paper, Typography } from "@mui/material";
+import { Box, Grid, Grow, List, Paper, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 
 import { navItems } from "../../utils/navItems";
@@ -30,10 +30,12 @@ export default function Sidebar() {
     }, [ref, show])
     return (
         <Box sx={{ position: "fixed", top: 0, left: 0, zIndex:502 }}>
-            <Paper ref={ref} sx={{ width: show ? 250 : 90, transition: "all .5s", height: "100vh", borderRadius: 0 }}  >
+            <Paper ref={ref} sx={{ width: show ? 250 : 90, transition: "all .5s", height: "100vh", borderRadius: 0, background :'linear-gradient(to bottom, #99001a, #f00707)' }}  >
                 <Grid container direction={"column"}  >
                     <Grid item xs={12}>
-                        <Typography variant="h3" sx={{ fontFamily: "Kanit, sans-serif", visibility: show ? "visible" : "hidden" }}>Admin</Typography>
+                        <Grow in={show}>
+                            <Typography variant="h3" sx={{ fontFamily: "Kanit, sans-serif", color : "whitesmoke" }}>Admin</Typography>
+                        </Grow>
                     </Grid>
                     <Grid item xs={12} >
                         <List >

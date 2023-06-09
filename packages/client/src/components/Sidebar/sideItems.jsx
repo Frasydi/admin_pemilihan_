@@ -1,4 +1,4 @@
-import { Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
+import { Collapse, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
 import PropTypes from "prop-types"
 import { useEffect, useRef, useState } from "react"
 import { MdExpandLess, MdExpandMore } from "react-icons/md"
@@ -17,24 +17,23 @@ export default function SideItems({ setShow, show, item }) {
 
     return (
         <>
-            <ListItem sx={{ width: show ? "100%" : 80, overflow: "hidden" }} className="list-item-data-nav" >
+            <ListItem sx={{ color : "whitesmoke",marginTop: 5, paddingY: 0, width: show ? "100%" : 80, overflow: "hidden", justifyContent: "center" }} className="list-item-data-nav" >
                 <ListItemButton ref={ref2} onClick={() => {
                     setShow(true)
                     setOpen(val => !val)
                 }}>
                     <ListItemIcon>
-                        {item.icon}
-
-
+                        <item.Icon color="whitesmoke"/>
                     </ListItemIcon>
-                    <ListItemText primary={item.label}  sx={{ transition: "all .5s", overflow: "hidden", display : show ? "block" : "none" }} />
-                    {
-                        show ? <>
+                    <Collapse in={show}>
+                        <Grid container alignItems={"center"} justifyContent={"space-between"}>
+                            <ListItemText primary={item.label} sx={{ transition: "all .5s", overflow: "hidden", display: show ? "block" : "none" }} />
                             {
-                                open ? <MdExpandMore /> : <MdExpandLess />
+                                open ? <MdExpandMore  /> : <MdExpandLess />
                             }
-                        </> : <></>
-                    }
+                        </Grid>
+                    </Collapse>
+
                 </ListItemButton>
             </ListItem>
             <Collapse ref={ref} in={open} timeout="auto" unmountOnExit>

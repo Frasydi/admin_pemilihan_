@@ -1,7 +1,7 @@
 import { Pemilih } from "@prisma/client";
 import { IResult } from "../types/Iresult";
 import { IPemilih, IPemilihAdd, ZPemilih, ZPemilihAdd } from "../types/IPemilih";
-import { delPemilih, getAllPemilih, postPemilih, putPemilih, putPemilihKandidat, selectPemilih } from "../service/pemilih";
+import { addManyPemilih, delPemilih, getAllPemilih, postPemilih, putPemilih, putPemilihKandidat, selectPemilih } from "../service/pemilih";
 import { z } from "zod";
 
 export async function AllPemilih(query : IPemilih) : IResult<Pemilih[]> {
@@ -99,4 +99,15 @@ export async function mencariPemilih(id : number, search : string) : IResult<Pem
 
     return await selectPemilih(id, search)
 
+}
+
+export async function insertManyPemilih(data : IPemilihAdd[]) :IResult<null> {
+    const validation = z.array(ZPemilihAdd.strict()).safeParse(data)
+    if(validation.success === false) return {
+        status : false,
+        code : 400,
+        message : validation.error.issues[0].path + " : "+ validation.error.issues[0].message,
+    }
+
+    return await addManyPemilih(data)
 }
