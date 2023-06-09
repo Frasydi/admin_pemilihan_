@@ -1,6 +1,7 @@
 import { RxDashboard } from "react-icons/rx"
 import {BsFillDatabaseFill} from "react-icons/bs"
 import {ImLoop} from "react-icons/im" 
+import { AiOutlineUsergroupAdd } from "react-icons/ai"
 
 export const navItems = [
     {
@@ -27,5 +28,11 @@ export const navItems = [
         label : "Rekap",
         path : "/rekap",
         Icon : ImLoop
+    },
+    {
+        label : "Users",
+        path : "/users",
+        Icon : AiOutlineUsergroupAdd,
+        role : "super_admin"
     }
 ]

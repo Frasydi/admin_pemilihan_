@@ -37,7 +37,7 @@ export default function NavBar() {
                                 {paths.length > 1 && paths.map((el, ind) => {
                                     if(ind == 0) return (
                                         <Link key={el} color={"inherit"} href={"/"}>
-                                            dashboard
+                                            beranda
                                         </Link>
                                     )
                                     if(ind == paths.length-1) return

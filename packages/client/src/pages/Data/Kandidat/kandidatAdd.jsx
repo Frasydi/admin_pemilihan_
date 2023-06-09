@@ -97,7 +97,7 @@ export default function KandidatTambah({ tambah }) {
                             </FormControl>
                         </Grid>
                         <Grid item>
-                        <FormControl fullWidth>
+                            <FormControl fullWidth>
                                 <InputLabel id="kecamatan-id">Kelurahan</InputLabel>
                                 <Select
                                     labelId="kecamatan-id"
@@ -105,7 +105,7 @@ export default function KandidatTambah({ tambah }) {
                                     size="small"
                                     error={!!errors.kelurahan}
                                     helperText={errors.kelurahan?.message}
-                                    
+
                                     {...register("kelurahan")}
                                 >
                                     {
@@ -114,7 +114,7 @@ export default function KandidatTambah({ tambah }) {
                                                 {el}</MenuItem>
                                         ))
                                     }
-                                    
+
                                 </Select>
                             </FormControl>
                         </Grid>

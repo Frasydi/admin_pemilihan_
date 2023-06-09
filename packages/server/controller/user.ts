@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { LoginUser, RegisterUser, changeUserPassword } from "../service/user";
+import { LoginUser, RegisterUser, changeUserPassword, delUser, getAllUsers } from "../service/user";
 import { verifyToken } from "../util/jwt";
 import { IUser, IUserNewPassword, IuserAdd, ZUserNewPassword, Zuser, ZuserAdd } from "../types/IUser";
 import { IResult } from "../types/Iresult";
@@ -85,4 +85,29 @@ export async function changePassword(pass : IUserNewPassword, id : number) : IRe
     }
 
     return await changeUserPassword(pass, id)
+}
+
+export async function AllUsers(search : string) : IResult<Array<{id : number, username : string, role : string}>>{
+    if(z.string().safeParse(search).success === false) return {
+        status : false,
+        code : 400,
+        message : "Invalid search"
+    }
+    return await getAllUsers(search)
+}   
+
+export async function removeUser(id : number, userId : number) : IResult<null> {
+    if(z.number().nonnegative().int().safeParse(id).success === false) return {
+        status  : false,
+        code : 400,
+        message : "Invalid id"
+    }
+    if(id == userId) return {
+        status : false,
+        code : 400,
+        message : "Tidak bisa menghapus akunmu sendiri"
+    }
+
+    return await delUser(id, userId)
+
 }

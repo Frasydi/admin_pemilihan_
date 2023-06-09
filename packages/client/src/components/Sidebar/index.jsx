@@ -4,14 +4,17 @@ import { useEffect, useRef, useState } from "react";
 import { navItems } from "../../utils/navItems";
 import SideItem from "./sideItem";
 import SideItems from "./sideItems";
+import useAuth from "../../hooks/useAuth";
 export default function Sidebar() {
+    const {user} = useAuth()
     const ref = useRef(null)
     const [show, setShow] = useState(false)
     useEffect(() => {
         const checkIsClickInsideNav = addEventListener("click", (ev) => {
             const lists = document.querySelectorAll(".list-item-data-nav")
             for (let list of lists) {
-                if (list.contains(ev.target)) {
+                
+                if (list?.contains(ev.target)) {
                     return
                 }
             }
@@ -40,7 +43,7 @@ export default function Sidebar() {
                     <Grid item xs={12} >
                         <List >
                             {
-                                navItems.map((el, ind) => el.children != null ? <SideItems key={`${ind}-sideitem`} setShow={setShow} item={el} show={show} /> : <SideItem key={`${ind}-sideitem`} item={el} show={show} />)
+                                navItems.map((el, ind) => el.children != null ? <SideItems key={`${ind}-sideitem`} setShow={setShow} item={el} show={show} /> : ( (el.role == null || el.role == user.role) && <SideItem key={`${ind}-sideitem`} item={el} show={show} />))
                             }
                         </List>
                     </Grid>

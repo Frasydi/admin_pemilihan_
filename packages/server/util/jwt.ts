@@ -1,9 +1,10 @@
 import jwt, { Jwt } from "jsonwebtoken"
 
-export function createToken(user : {id : number, username : string, password : string}) {
+export function createToken(user : {id : number, username : string, password : string, role : string}) {
     const token = jwt.sign({
         id: user.id,
-        username: user.username
+        username: user.username,
+        role : user.role
     }, process.env.SECRET_KEY || "", { expiresIn: "1h" })
     return token
 }

@@ -1,5 +1,5 @@
 import { Response, Router } from "express";
-import { Auth, Login, Register, changePassword } from "../controller/user";
+import { AllUsers, Auth, Login, Register, changePassword, removeUser } from "../controller/user";
 import { AuthMiddleware, CustomRequest } from "../util/auth";
 
 const UserRouter = Router()
@@ -11,6 +11,17 @@ UserRouter.post("/register", AuthMiddleware ,async (req ,res : Response) => {
         status : false
     })
     const result = await Register(req.body)
+    return res.status(result.code).json(result)
+})
+
+UserRouter.get("/all", AuthMiddleware,async(req,res) => {
+    //@ts-ignore
+    if(req.auth.role !== "super_admin") return res.status(403).json({
+        message : "You are not allowed to access this",
+        code : 403,
+        status : false
+    })
+    const result = await AllUsers(req.query?.search as string || "")
     return res.status(result.code).json(result)
 })
 
@@ -45,5 +56,18 @@ UserRouter.put("/changePassword/:id", AuthMiddleware,async (req, res) => {
         return res.cookie("token", "", {maxAge : 0}).status(result.code).json(result)
     }
     return res.status(result.code).json(result)
+})
+
+UserRouter.delete("/del/:id", AuthMiddleware, async (req, res) => {
+    //@ts-ignore
+    if(req.auth.role !== "super_admin") return res.status(403).json({
+        message : "You are not allowed to access this",
+        code : 403,
+        status : false
+    })
+    //@ts-ignore
+    const result = await removeUser(parseInt(req.params.id), req.auth.id)
+    return res.status(result.code).json(result)
+
 })
 export default UserRouter

@@ -77,7 +77,7 @@ export async function LoginUser(data: IUser) {
                 token: token, user: {
                     id: user.id,
                     username: user.username,
-                    role : user.role
+                    role: user.role
                 }
             },
             status: true
@@ -93,7 +93,7 @@ export async function LoginUser(data: IUser) {
 }
 
 
-export async function changeUserPassword({password, newpassword}: IUserNewPassword, id: number) {
+export async function changeUserPassword({ password, newpassword }: IUserNewPassword, id: number) {
     try {
         const user = await prisma.user.findFirst({
             where: {
@@ -118,17 +118,17 @@ export async function changeUserPassword({password, newpassword}: IUserNewPasswo
         }
 
         await prisma.user.update({
-            where : {
+            where: {
                 id
             },
-            data : {
-                password : HashingPassword(newpassword)
+            data: {
+                password: HashingPassword(newpassword)
             }
         })
         return {
             code: 200,
             message: "Success Login",
-            
+
             status: true
         }
     } catch (err) {
@@ -137,6 +137,75 @@ export async function changeUserPassword({password, newpassword}: IUserNewPasswo
             code: 500,
             message: "Server Error",
             status: false
+        }
+    }
+}
+
+export async function getAllUsers(search: string) {
+    try {
+        const result = await prisma.user.findMany({
+            where: {
+                OR: [
+                    {
+                        username: {
+                            contains: search
+                        }
+                    },
+                    {
+                        role: {
+                            contains: search
+                        }
+                    }
+
+                ]
+            },
+            select: {
+                id: true,
+                username: true,
+                role: true
+            }
+        })
+        return {
+            status: true,
+            code: 200,
+            message: "ok",
+            data: result
+        }
+    } catch (err) {
+        console.log(err)
+        return {
+            status: false,
+            code: 500,
+            message: "Server Error",
+        }
+    }
+}
+
+export async function delUser(id : number, userId : number) {
+    try {
+        const users = await prisma.user.count()
+        if(users <= 1) return {
+            status : false,
+            code : 400,
+            message : "Tidak bisa menghapus user jika jumlah user tidak lebih dari satu"
+        }
+        
+        await prisma.user.delete({
+            where : {
+                id
+            }
+        })
+        return {
+            status : true,
+            code : 200,
+            message : "Berhasil menghapus user"
+        }
+    }catch(err) {
+        console.log(err)
+        return {
+            status : false,
+            code : 500,
+            message :"Server Error"
         }
     }
 }
