@@ -30,7 +30,7 @@ export default function Selamat_Datang() {
                     </Grid>
                     <Grid item>
                         <Typography variant="body1">
-                            Deskripsi...
+                            {auth.user.role}
                         </Typography>
                     </Grid>
                     <Grid item>

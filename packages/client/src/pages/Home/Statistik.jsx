@@ -30,7 +30,7 @@ export default function Statistik({ kandidat, pemilih, tim }) {
     useEffect(() => {
         const timeout = setTimeout(() => {
             setIsShow(true)
-        }, 500)
+        }, 200)
         return () => {
             clearTimeout(timeout)
             setIsShow(false)

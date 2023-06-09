@@ -66,7 +66,7 @@ export default function Recap() {
                         </Grow>
 
                     </Grid>
-                    <Grid item>
+                    <Grid item >
                         <Typography variant="h5">
                             Kecamatan
                         </Typography>
@@ -74,7 +74,7 @@ export default function Recap() {
                         {(!isLoading && !isError) && <RekapTable data={data.countKecamatan} />}
 
                     </Grid>
-                    <Grid item>
+                    <Grid item mt={3}>
                         <Typography variant="h5">
                             Kelurahan
                         </Typography>
