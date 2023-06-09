@@ -2,7 +2,7 @@ import useAuth from "../../hooks/useAuth";
 import { Box, CircularProgress, Grid, ThemeProvider, Typography, createTheme } from "@mui/material";
 import Sidebar from "../Sidebar";
 import PropTypes from "prop-types"
-import NavBar from "../Navbar";
+import NavBar from "../NavBar";
 
 const theme = createTheme({
     typography: {
