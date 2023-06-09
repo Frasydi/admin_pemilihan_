@@ -63,17 +63,31 @@ const router = createBrowserRouter([
         ]
       },
       {
-        path : "/tim/:id",
+        path : "/tim",
         children : [
           {
             index : true,
+            element : <Navigator to={"/"}/>
+          },
+          {
+            path : "/tim/:id",
             element : <KandidatTimKecamatan />
-          }
+          },
+          
         ]
       },
       {
-        path : "/anggota/:id",
-        element : <AnggotaTim/>
+        path : "/anggota",
+        children : [
+          {
+            index : true,
+            element : <Navigator to={"/"}/>
+          },
+          {
+            path : "/anggota/:id",
+            element : <AnggotaTim/>
+          }
+        ]
       },
       {
         path : "/rekap",
