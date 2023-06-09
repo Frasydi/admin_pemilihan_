@@ -14,6 +14,7 @@ export default function User() {
     const { data, refetch, isLoading, isError } = useFetch("/api/user/all?" + new URLSearchParams({ search }))
 
     async function deleteUser(id) {
+        
         const {isConfirmed} = await Swal.fire({
             title : "Peringatan",
             icon : "question",
