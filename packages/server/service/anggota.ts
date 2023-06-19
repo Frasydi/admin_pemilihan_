@@ -1,5 +1,6 @@
 import { Pemilih } from "@prisma/client"
 import prisma from "../prisma/prisma"
+import { createNotifikasi } from "./Notifikasi"
 
 export async function getAllAnggota(id : number) {
     try {
@@ -34,8 +35,22 @@ export async function getAllAnggota(id : number) {
     }
 }
 
-export async function pushAnggota(id : number, data : number[]) {
+export async function pushAnggota(id : number, data : number[], username : string) {
     try {
+        let countAnggota = await prisma.anggota_Tim.count({
+            where : {
+                tim_id : id
+            }
+        })
+        console.log(countAnggota)
+        console.log(data.length)
+        if(countAnggota + data.length > 2) {
+            return {
+                status : false,
+                code : 400,
+                message : "Tidak bisa menambahkan lebih dari dua anggota"
+            }
+        }
         const newData = data.map(el => ({
             pemilih_id : el,
             tim_id : id
@@ -43,6 +58,8 @@ export async function pushAnggota(id : number, data : number[]) {
         await prisma.anggota_Tim.createMany({
             data : newData
         })
+
+        createNotifikasi(`${username} menambahkan ${data.length} anggota pada tim ${id}`)
 
         return {
             status : true,
@@ -59,7 +76,7 @@ export async function pushAnggota(id : number, data : number[]) {
     }
 }
 
-export async function delAnggota(data : number[]) {
+export async function delAnggota(data : number[], username : string) {
     try {
         
         const promise = data.map(async(dat) => {
@@ -70,6 +87,9 @@ export async function delAnggota(data : number[]) {
             })
         })
         await Promise.all(promise)
+
+        await createNotifikasi(`${username} menghapus ${data.length} anggota pada tim ${data[0]}`)
+
         return {
             status : true,
             code : 200,

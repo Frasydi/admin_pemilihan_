@@ -2,6 +2,7 @@ import { Pemilih, Prisma } from "@prisma/client";
 import { IPemilih, IPemilihAdd } from "../types/IPemilih";
 import { IResult } from "../types/Iresult";
 import prisma from "../prisma/prisma";
+import { createNotifikasi } from "./Notifikasi";
 
 export async function getAllPemilih(query: IPemilih): IResult<Pemilih[]> {
     try {
@@ -43,12 +44,12 @@ export async function getAllPemilih(query: IPemilih): IResult<Pemilih[]> {
     }
 }
 
-export async function postPemilih(data: IPemilihAdd) {
+export async function postPemilih(data: IPemilihAdd, username : string) {
     try {
         await prisma.pemilih.create({
             data
         })
-
+        await createNotifikasi(`Pemilih dengan nik ${data.nik} berhasil ditambahkan oleh ${username}`)
         return {
             status: true,
             code: 200,
@@ -78,14 +79,14 @@ export async function postPemilih(data: IPemilihAdd) {
     }
 }
 
-export async function delPemilih(id: number) {
+export async function delPemilih(id: number, username : string) {
     try {
         const result = await prisma.pemilih.delete({
             where: {
                 id
             }
         })
-
+        await createNotifikasi(`Pemilih dengan nik ${result.nik} berhasil dihapus oleh ${username}`)
         return {
             status: true,
             code: 200,
@@ -102,7 +103,7 @@ export async function delPemilih(id: number) {
     }
 }
 
-export async function putPemilih(id: number, data: IPemilihAdd) {
+export async function putPemilih(id: number, data: IPemilihAdd, username : string) {
     try {
         const result = await prisma.pemilih.update({
             where: {
@@ -110,7 +111,7 @@ export async function putPemilih(id: number, data: IPemilihAdd) {
             },
             data: data
         })
-
+        await createNotifikasi(`Pemilih dengan nik ${result.nik} berhasil diubah oleh ${username}`)
         return {
             status: true,
             code: 200,
@@ -136,7 +137,7 @@ export async function putPemilih(id: number, data: IPemilihAdd) {
     }
 }
 
-export async function putPemilihKandidat(kandidatId: number, dataId: number[]) {
+export async function putPemilihKandidat(kandidatId: number, dataId: number[], username : string) {
     try {
         const promise = dataId.map(async (id) => {
             try {
@@ -157,6 +158,7 @@ export async function putPemilihKandidat(kandidatId: number, dataId: number[]) {
             }
         })
         await Promise.all(promise)
+        await createNotifikasi(`Pemilih dengan id ${dataId} berhasil dihubungkan dengan kandidat ${kandidatId} oleh ${username}`)
         return {
             status: true,
             code: 200,
@@ -232,7 +234,7 @@ export async function selectPemilih(id: number, search: string) {
     }
 }
 
-export async function addManyPemilih(pemilih : IPemilihAdd[]) {
+export async function addManyPemilih(pemilih : IPemilihAdd[], username : string) {
     try {
 
         const promises = pemilih.map(async(el) => {
@@ -249,6 +251,8 @@ export async function addManyPemilih(pemilih : IPemilihAdd[]) {
 
         await Promise.all(promises)
 
+        await createNotifikasi(`Pemilih yang berjumlah ${pemilih.length} berhasil ditambahkan oleh ${username}`)
+        
         return {
             status : true,
             code : 200,
@@ -259,6 +263,50 @@ export async function addManyPemilih(pemilih : IPemilihAdd[]) {
         return {
             status : false,
             code : 200,
+            message : "Server error"
+        }
+    }
+}
+
+export async function getAllPendukung(query : IPemilih) {
+    try {
+        const {jenis_kelamin, kandidatId, ...quer} : any = query
+        const where : any = {
+            
+        }
+
+        Object.keys(quer).forEach((el : any) => {
+            if(quer[el] != null) {
+                where[el] = {
+                    contains : quer[el]
+                }
+            }
+        })
+        if(jenis_kelamin != "Semua") {
+            where.jenis_kelamin = jenis_kelamin
+        }
+        if(kandidatId != null &&  kandidatId >= 0) {
+            where.kandidatId = kandidatId
+        } else {
+            where.NOT = {
+                kandidatId : null
+            }
+        }
+        const result = await prisma.pemilih.findMany({
+            where 
+        })
+
+        return {
+            status : true,
+            code : 200,
+            message : "Ok",
+            data : result
+        }
+    }catch(err) {
+        console.log(err)
+        return {
+            status : false,
+            code : 500,
             message : "Server error"
         }
     }

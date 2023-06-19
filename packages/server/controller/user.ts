@@ -5,6 +5,7 @@ import { IUser, IUserNewPassword, IuserAdd, ZUserNewPassword, Zuser, ZuserAdd } 
 import { IResult } from "../types/Iresult";
 
 
+
 export async function Register(data: IuserAdd): IResult<null> {
     const validation = ZuserAdd.safeParse(data)
     if (validation.success == false) {

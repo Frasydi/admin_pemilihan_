@@ -6,17 +6,16 @@ export const Zuser = z.object({
 })
 
 export const ZuserAdd = z.object({
+
     username: z.string().nonempty().regex(/^[^\s]+$/, "Tidak boleh ada spasi"),
     password: z.string().nonempty().regex(/^[^\s]+$/, "Tidak boleh ada spasi"),
-    role: z.string().nonempty(),
-
+    role: z.enum(["super_admin", "kandidat_admin", "pemilihan_admin", "tim_admin", "anggota_admin"]),
 })
 
 export const ZUserNewPassword = z.object({
     password: z.string().nonempty().regex(/^[^\s]+$/, "Tidak boleh ada spasi"),
     newpassword: z.string().nonempty().regex(/^[^\s]+$/, "Tidak boleh ada spasi")
-}
-)
+})
 
 export type IUserNewPassword = z.infer<typeof ZUserNewPassword>
 export type IuserAdd = z.infer<typeof ZuserAdd>

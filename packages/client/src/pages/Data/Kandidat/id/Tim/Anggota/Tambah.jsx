@@ -30,6 +30,7 @@ export default function TambahAnggota({refetch}) {
             })
             const json = await fet.json()
             if(fet.ok === false) {
+                setOpen(false)
                 return Swal.fire("Error", json.message, "error")
             }
             refetch2()
@@ -39,6 +40,7 @@ export default function TambahAnggota({refetch}) {
             return Swal.fire("Success", json.message, "success")
         }catch(err) {
             console.log(err)
+            setOpen(false)
             Swal.fire("Error", "Server Error", "error")
         }
     }
@@ -102,8 +104,9 @@ export default function TambahAnggota({refetch}) {
                                                 if (temp.includes(item.id)) {
                                                     const ind = temp.indexOf(item.id);
                                                     temp.splice(ind, 1)
-
+                                                    
                                                 } else {
+                                                    if(temp.length >= 2) return temp
                                                     temp.push(item.id)
                                                 }
 

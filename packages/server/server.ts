@@ -12,6 +12,8 @@ import UtilRouter from "./middleware/util";
 import AnggotaTimRout from "./middleware/anggota";
 import prisma from "./prisma/prisma";
 import { Register } from "./controller/user";
+import NotifikasiRout from "./middleware/notifikasi";
+import requestIp from "request-ip";
 
 (async () => {
     const user = await prisma.user.count();
@@ -26,7 +28,7 @@ import { Register } from "./controller/user";
 )()
 
 const app = express();
-
+app.use(requestIp.mw())
 app.use(cookieParser())
 app.use(express.json())
 
@@ -35,6 +37,7 @@ app.use("/user", UserRouter)
 app.use("/pemilih", PemilihRouter)
 app.use("/tim", TimRouter)
 app.use("/anggota", AnggotaTimRout)
+app.use("/notifikasi", NotifikasiRout)
 app.use('/util', UtilRouter)
 app.get("/gambar/*", (req: Request<{ 0: string }>, res) => {
     const name = req.params[0]

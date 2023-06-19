@@ -15,7 +15,7 @@ export async function allAnggota(id : number) : IResult<Anggota_Tim[]> {
     return await getAllAnggota(id)
 }
 
-export async function tambahAnggota(id : number, data : number[]) : IResult<null> {
+export async function tambahAnggota(id : number, data : number[], username : string) : IResult<null> {
     if(z.number().nonnegative().int().safeParse(id).success === false) return {
         status : false,
         code : 400,
@@ -30,10 +30,10 @@ export async function tambahAnggota(id : number, data : number[]) : IResult<null
         }
     }
     console.log(data)
-    return await pushAnggota(id, validation.data)
+    return await pushAnggota(id, validation.data, username)
 }
 
-export async function hapusAnggota(data : number[]) {
+export async function hapusAnggota(data : number[], username : string) {
     
     const validation = z.array(z.number().nonnegative().int()).safeParse(data)
     if(validation.success === false) {
@@ -44,5 +44,5 @@ export async function hapusAnggota(data : number[]) {
         }
     }
     console.log(data)
-    return await delAnggota(validation.data)
+    return await delAnggota(validation.data, username)
 }

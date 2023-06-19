@@ -43,7 +43,7 @@ export default function Sidebar() {
                     <Grid item xs={12} >
                         <List >
                             {
-                                navItems.map((el, ind) => el.children != null ? <SideItems key={`${ind}-sideitem`} setShow={setShow} item={el} show={show} /> : ( (el.role == null || el.role == user.role) && <SideItem key={`${ind}-sideitem`} item={el} show={show} />))
+                                navItems.map((el, ind) => el.children != null ? <SideItems key={`${ind}-sideitem`} setShow={setShow} item={el} show={show} /> : ( (el.role == null || el.role(user.role)) && <SideItem key={`${ind}-sideitem`} item={el} show={show} />))
                             }
                         </List>
                     </Grid>

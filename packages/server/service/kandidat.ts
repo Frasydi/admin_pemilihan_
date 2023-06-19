@@ -3,6 +3,7 @@ import prisma from '../prisma/prisma';
 import { IKandidatAdd } from '../types/IKandidat';
 import { deleteFile } from '../util/file';
 import { kelurahan } from '../util/dataUtil';
+import { createNotifikasi } from './Notifikasi';
 
 export async function getKandidatSearch(search: string) {
     try {
@@ -55,11 +56,18 @@ export async function getKandidatSearch(search: string) {
     }
 }
 
-export async function postKandidat(data: IKandidatAdd, image?: string | null) {
+export async function postKandidat(data: IKandidatAdd, image: string | null, username : string) {
     try {
+        const data2 : any = data
+        if(image != null) {
+            data2.gambar = image
+        }
         const result = await prisma.kandidat.create({
-            data: { ...data, gambar: image }
+            data: data2
         })
+
+        await createNotifikasi(`Kandidat ${result.nama} berhasil ditambahkan, oleh ${username}`)
+
         return {
             code: 200,
             message: "OK",
@@ -89,12 +97,19 @@ export async function postKandidat(data: IKandidatAdd, image?: string | null) {
     }
 }
 
-export async function putKandidat(id: number, data: IKandidatAdd, gambar?: string | null) {
+export async function putKandidat(id: number, data: IKandidatAdd, gambar: string | null, username : string) {
     try {
+        const data2 : any = data
+        if(gambar != null) {
+            data2.gambar = gambar
+        }
         const fet = await prisma.kandidat.update({
             where: { id },
-            data: { ...data, gambar }
+            data: data2
         })
+
+        await createNotifikasi(`Kandidat ${fet.nama} berhasil diubah, oleh ${username}`)
+
         return {
             status: false,
             code: 200,
@@ -162,7 +177,7 @@ export async function getSingleKandidat(id: number) {
     }
 }
 
-export async function delKandidat(id: number) {
+export async function delKandidat(id: number, username : string) {
     try {
         const result = await prisma.kandidat.delete({
             where: {
@@ -170,6 +185,8 @@ export async function delKandidat(id: number) {
             }
         })
         deleteFile(result.gambar || "")
+
+        await createNotifikasi(`Kandidat ${result.nama} berhasil dihapus, oleh ${username}`)
         return {
             status: true,
             code: 200,

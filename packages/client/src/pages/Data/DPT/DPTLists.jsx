@@ -1,11 +1,12 @@
+/* eslint-disable react/prop-types */
 import { Paper, Table, TableBody, TableCell, TableHead, TableRow, tableCellClasses } from "@mui/material";
-import { dptkeys, pemilihData } from "./data";
-export const tableHeader = ["#", "NIK", "NKK", "Nama", "Alamat", "Jenis Kelamin", "Kelurahan", "Kecamatan", "kandidatId"]
+import { tableHeader } from "../Pemilih";
+import { dptkeys } from "../Pemilih/pemilihData";
 
 
 
 
-export default function DPTLists() {
+export default function DPTLists({data}) {
 
 
 
@@ -15,7 +16,7 @@ export default function DPTLists() {
                 <TableHead sx={{ backgroundColor: "#292D2E" }}>
                     <TableRow>
                         {
-                            tableHeader.map(el => (
+                            tableHeader.filter(el => el != "Aksi").map(el => (
                                 <TableCell sx={{
                                     [`&.${tableCellClasses.head}`]: {
                                         color: "white",
@@ -32,7 +33,7 @@ export default function DPTLists() {
                 </TableHead>
                 <TableBody>
                     {
-                        pemilihData.map((el, ind) => (
+                        data?.map((el, ind) => (
                             <TableRow key={el}>
                                 <TableCell sx={{
                                     [`&.${tableCellClasses.body}`]: {

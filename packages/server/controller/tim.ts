@@ -23,7 +23,7 @@ export async function KecamatanTim(kandidatId : number, search : string) : IResu
     return await getKecamatanTim(kandidatId, search)
 }
 
-export async function addTim(id : number, data : ITimAdd) {
+export async function addTim(id : number, data : ITimAdd, username : string) {
     if(z.number().int().nonnegative().safeParse(id).success === false) {
         return {
             status : false,
@@ -40,7 +40,7 @@ export async function addTim(id : number, data : ITimAdd) {
         }
     }
 
-    return await pushTim(id , validation.data)
+    return await pushTim(id , validation.data, username )
 }
 
 export async function KelurahanTim(id : number, kecamatan : string, search : string) :IResult<Tim[]>{
@@ -68,7 +68,7 @@ export async function KelurahanTim(id : number, kecamatan : string, search : str
     return await getKelurahanTim(id, kecamatan, search)
 }
 
-export async function removeTim(id : number) {
+export async function removeTim(id : number, username : string) {
     if(z.number().nonnegative().safeParse(id).success === false) {
         return {
             status : false,
@@ -77,10 +77,10 @@ export async function removeTim(id : number) {
         }
     }
 
-    return await delTim(id)
+    return await delTim(id, username )
 }
 
-export async function editTim(id : number, data : ITimAdd) :IResult<null> {
+export async function editTim(id : number, data : ITimAdd, username : string) :IResult<null> {
     if(z.number().int().nonnegative().safeParse(id).success === false) {
         return {
             status : false,
@@ -97,5 +97,5 @@ export async function editTim(id : number, data : ITimAdd) :IResult<null> {
         }
     }
 
-    return await putTim(id , validation.data)
+    return await putTim(id , validation.data, username )
 }

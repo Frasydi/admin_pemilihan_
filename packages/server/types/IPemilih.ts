@@ -7,6 +7,7 @@ export const ZPemilih = z.object({
     jenis_kelamin : z.enum(["L", "P","Semua"]),
     kelurahan : z.string(),
     kecamatan : z.string(),
+    kandidatId : z.preprocess((val : any) => parseInt(val), z.number().int().optional()).optional(),
 })
 
 export type IPemilih = z.infer<typeof ZPemilih>

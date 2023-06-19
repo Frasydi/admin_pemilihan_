@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client"
 import prisma from "../prisma/prisma"
 import { IKandidatAdd } from "../types/IKandidat"
 import { ITimAdd } from "../types/ITim"
+import { createNotifikasi } from "./Notifikasi"
 
 export async function getKecamatanTim(kandidatID: number, search : string) {
     try {
@@ -47,7 +48,7 @@ export async function getKecamatanTim(kandidatID: number, search : string) {
     }
 }
 
-export async function pushTim(id : number, data: ITimAdd) {
+export async function pushTim(id : number, data: ITimAdd, username : string) {
     try {
        
         await prisma.tim.create({
@@ -60,6 +61,8 @@ export async function pushTim(id : number, data: ITimAdd) {
                 }
             }
         })
+
+        await createNotifikasi(`Tim ${data.nama} berhasil ditambahkan oleh ${username}`)
 
         return {
             status : true,
@@ -98,7 +101,7 @@ export async function pushTim(id : number, data: ITimAdd) {
 }
 
 
-export async function putTim(id : number, data: ITimAdd) {
+export async function putTim(id : number, data: ITimAdd, username : string) {
     try {
        
         await prisma.tim.update({
@@ -109,6 +112,7 @@ export async function putTim(id : number, data: ITimAdd) {
                 ...data
             }
         })
+        await createNotifikasi(`Tim ${data.nama} berhasil diubah, oleh ${username}`)
 
         return {
             status : true,
@@ -191,13 +195,14 @@ export async function getKelurahanTim(id : number, kecamatan : string, search : 
     }
 }
 
-export async function delTim(id : number) {
+export async function delTim(id : number, username : string) {
     try {
         const result = await prisma.tim.delete({
             where : {
                 id
             }
         })
+        await createNotifikasi(`${username} menghapus tim ${result.nama}`)
         return {
             status : true,
             code : 200,

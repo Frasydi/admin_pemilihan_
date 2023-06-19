@@ -14,8 +14,7 @@ export async function AuthMiddleware(req  :Request, res : Response, next : NextF
         if(auth.data == null) {
             return res.status(401).send()
         }
-        //@ts-ignore
-        req.auth = auth.data
+        (req as CustomRequest).auth = auth.data
         next()
     }catch(err) {
         console.log(err)

@@ -1,9 +1,9 @@
+/* eslint-disable react/prop-types */
 import { Button, Checkbox, Grid, TableRow } from "@mui/material"
 import { dptkeys } from "./pemilihData"
 import useDPT from "./usePemilih"
 import { CustomCell } from "."
 
-// eslint-disable-next-line react/prop-types
 export default function PemilihList({ el, ind, setSelected, sel }) {
     const dpt = useDPT()
 
@@ -13,7 +13,7 @@ export default function PemilihList({ el, ind, setSelected, sel }) {
                 backgroundColor : "#DEDEDE"
             }
         }}>
-            <CustomCell > <Checkbox checked={sel} onChange={(ev) => setSelected(el.id)} inputProps={{ 'aria-label': 'controlled' }} /></CustomCell>
+            <CustomCell > <Checkbox checked={sel} onChange={() => setSelected(el.id)} inputProps={{ 'aria-label': 'controlled' }} /></CustomCell>
             <CustomCell > {ind + 1}</CustomCell>
             {
 

@@ -5,7 +5,7 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
-const role = ["super_admin"]
+const role = ["super_admin", "kandidat_admin", "pemilihan_admin", "tim_admin", "anggota_admin"]
 
 export default function TambahUser({ refetch }) {
     const [open, setOpen] = useState(false)

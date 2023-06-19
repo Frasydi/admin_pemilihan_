@@ -66,3 +66,11 @@ model user {
   password String 
   role String
 }
+
+model notifikasi {
+  id Int @id @default(autoincrement())
+  isiNotifikasi String 
+  lat Float?
+  long Float?
+  created_at DateTime @default(now())
+}

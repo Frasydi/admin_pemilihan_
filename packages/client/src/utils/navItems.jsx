@@ -16,23 +16,30 @@ export const navItems = [
         children : [
             {
                 label : "Data Kandidat",
-                path : "/data/kandidat"
+                path : "/data/kandidat",
+                role : (role) => ["super_admin", "kandidat_admin","tim_admin", "anggota_admin"].includes(role)
             },
             {
                 label : "Data Pemilih",
-                path : "/data/pemilih"
+                path : "/data/pemilih",
+                role : (role) => role == "super_admin" || role == "pemilihan_admin"
+            }, 
+            {
+                label : "Data Pendukung",
+                path : "/data/dpt",
+                role : (role) => role == "super_admin" || role == "pemilihan_admin"
             }
         ]
     },
     {
         label : "Rekap",
         path : "/rekap",
-        Icon : ImLoop
+        Icon : ImLoop,
     },
     {
         label : "Users",
         path : "/users",
         Icon : AiOutlineUsergroupAdd,
-        role : "super_admin"
+        role : (role) => role == "super_admin"
     }
 ]

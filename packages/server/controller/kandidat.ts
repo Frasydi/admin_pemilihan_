@@ -31,7 +31,7 @@ export async function SingleKandidat(id : number) : IResult<kandidat & {tim : nu
     return await getSingleKandidat(id)
 }
 
-export async function addKandidat(data : IKandidatAdd, image : formidable.File) : IResult<null> {
+export async function addKandidat(data : IKandidatAdd, image : formidable.File, username : string) : IResult<null> {
     const validation = ZKandidatAdd.safeParse(data)
     if(validation.success === false) {
         return {
@@ -41,15 +41,15 @@ export async function addKandidat(data : IKandidatAdd, image : formidable.File) 
         }
     }
     
-    let imageName 
+    let imageName = null
     if(image != null) {
         imageName = await saveFile(image.originalFilename || "", image.filepath || "")
     }
 
-    return postKandidat(validation.data, imageName)
+    return postKandidat(validation.data, imageName, username)
 }
 
-export async function editKandidat(id : number, data : IKandidatAdd, gambar : formidable.File) : IResult<null> {
+export async function editKandidat(id : number, data : IKandidatAdd, gambar : formidable.File, username : string) : IResult<null> {
     if(z.number().safeParse(id).success === false) {
         return {
             code : 200,
@@ -66,14 +66,14 @@ export async function editKandidat(id : number, data : IKandidatAdd, gambar : fo
             status : false
         }
     }
-    let imageName 
+    let imageName = null
     if(gambar != null) {
         imageName = await saveFile(gambar.originalFilename || "", gambar.filepath || "")
     }
-    return await putKandidat(id, validation.data, imageName)
+    return await putKandidat(id, validation.data, imageName, username)
 }
 
-export async function hapusKandidat(id : number) : IResult<null> {
+export async function hapusKandidat(id : number, username : string) : IResult<null> {
     if(z.number().nonnegative().safeParse(id).success === false) {
         return {
             status : false,
@@ -82,7 +82,7 @@ export async function hapusKandidat(id : number) : IResult<null> {
         }
     }
 
-    return await delKandidat(id)
+    return await delKandidat(id, username)
 }
 
 export async function RecapData() :IResult<any> {

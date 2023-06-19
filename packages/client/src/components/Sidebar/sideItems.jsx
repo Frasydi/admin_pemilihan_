@@ -3,10 +3,12 @@ import PropTypes from "prop-types"
 import { useEffect, useRef, useState } from "react"
 import { MdExpandLess, MdExpandMore } from "react-icons/md"
 import SideItem from "./sideItem"
+import useAuth from "../../hooks/useAuth"
 export default function SideItems({ setShow, show, item }) {
     const [open, setOpen] = useState(false)
     const ref = useRef(null)
     const ref2 = useRef(null)
+    const {user} = useAuth()
     useEffect(() => {
         if (!show) {
             setOpen(false)
@@ -39,7 +41,7 @@ export default function SideItems({ setShow, show, item }) {
             <Collapse ref={ref} in={open} timeout="auto" unmountOnExit>
                 <List component="div" >
                     {
-                        item.children.map((el, ind) => <SideItem show={show} item={el} key={ind + "nav-item"} />)
+                        item.children.map((el, ind) => (el.role == null || el.role(user.role)) ?  <SideItem show={show} item={el} key={ind + "nav-item"} /> : <></>)
                     }
                 </List>
             </Collapse>

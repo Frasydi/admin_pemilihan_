@@ -34,6 +34,7 @@
     "react-vis": "^1.12.1",
     "sort-by": "^1.2.0",
     "sweetalert2": "^11.7.5",
+    "vite-plugin-mkcert": "^1.15.0",
     "zod": "^3.21.4"
   },
   "devDependencies": {
