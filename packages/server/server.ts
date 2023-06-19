@@ -1,6 +1,6 @@
 import dotenv from "dotenv"
 dotenv.config()
-import express, { Request } from 'express';
+import express, { Request, Router } from 'express';
 import KandidatRouter from './middleware/kandidat';
 import UserRouter from './middleware/user';
 import cookieParser from "cookie-parser";
@@ -13,7 +13,6 @@ import AnggotaTimRout from "./middleware/anggota";
 import prisma from "./prisma/prisma";
 import { Register } from "./controller/user";
 import NotifikasiRout from "./middleware/notifikasi";
-import requestIp from "request-ip";
 
 (async () => {
     const user = await prisma.user.count();
@@ -28,18 +27,20 @@ import requestIp from "request-ip";
 )()
 
 const app = express();
-app.use(requestIp.mw())
+
 app.use(cookieParser())
 app.use(express.json())
 
-app.use("/kandidat", KandidatRouter)
-app.use("/user", UserRouter)
-app.use("/pemilih", PemilihRouter)
-app.use("/tim", TimRouter)
-app.use("/anggota", AnggotaTimRout)
-app.use("/notifikasi", NotifikasiRout)
-app.use('/util', UtilRouter)
-app.get("/gambar/*", (req: Request<{ 0: string }>, res) => {
+const api = Router()
+
+api.use("/kandidat", KandidatRouter)
+api.use("/user", UserRouter)
+api.use("/pemilih", PemilihRouter)
+api.use("/tim", TimRouter)
+api.use("/anggota", AnggotaTimRout)
+api.use("/notifikasi", NotifikasiRout)
+api.use('/util', UtilRouter)
+api.get("/gambar/*", (req: Request<{ 0: string }>, res) => {
     const name = req.params[0]
     if (z.string().nonempty().safeParse(name).success === false) {
         return res.status(404).send()
@@ -47,7 +48,12 @@ app.get("/gambar/*", (req: Request<{ 0: string }>, res) => {
     const imageFilePath = path.join(__dirname, 'gambar', name);
     res.sendFile(imageFilePath);
 })
-app.listen(3379, () => {
-    console.log("listening on http://localhost:3379")
+
+app.use("/api", api)
+
+
+
+app.listen(process.env.PORT || 3379, () => {
+    console.log("listening on http://localhost:"+process.env.PORT || 3379); 
 
 })

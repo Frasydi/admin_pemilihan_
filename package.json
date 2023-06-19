@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "start": "concurrently \"wsrun --parallel start\"",
+    "build" : "cd packages/client && yarn build",
     "dev": "concurrently \"wsrun --parallel dev\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
