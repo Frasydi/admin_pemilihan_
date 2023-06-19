@@ -1,12 +1,11 @@
 import { Box, Grid} from "@mui/material";
-import useAuth from "../../hooks/useAuth";
 import Selamat_Datang from "./Selamat Datang";
 import Statistik from "./Statistik";
 import useFetch from "../../hooks/useFetch";
 
 
 export default function Home() {
-    const auth = useAuth()
+
     const {data, isLoading, isError} = useFetch("/api/util")
     return (
         <Box >

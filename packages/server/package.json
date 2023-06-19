@@ -4,8 +4,9 @@
   "main": "server.ts",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node server.ts",
-    "dev": "ts-node-dev server.ts"
+    "start": "node build/server.js",
+    "dev": "ts-node-dev server.ts",
+    "build" : "tsc"
   },
   "dependencies": {
     "@prisma/client": "^4.15.0",

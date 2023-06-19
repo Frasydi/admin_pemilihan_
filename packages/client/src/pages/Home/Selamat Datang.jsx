@@ -14,6 +14,7 @@ export default function Selamat_Datang() {
             clearInterval(timer)
         }
     }, [])
+    
     return (
         <Card elevation={4} sx={{ width: "75vw", padding: "3rem", background: 'linear-gradient(to right, #99001a, #f00707)' }} >
             <CardContent sx={{ color: "whitesmoke" }}>

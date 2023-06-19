@@ -54,6 +54,6 @@ app.use("/api", api)
 
 
 app.listen(process.env.PORT || 3379, () => {
-    console.log("listening on http://localhost:"+process.env.PORT || 3379); 
+    console.log("listening on http://localhost:"+(process.env.PORT || 3379)); 
 
 })

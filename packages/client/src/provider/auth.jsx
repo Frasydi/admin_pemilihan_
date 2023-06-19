@@ -21,9 +21,6 @@ export default function Auth({ children }) {
     const loc = useLocation()
     async function login({ username, password }, cbError) {
         try {
-
-            console.log(username)
-
             const fet = await fetch("/api/user/login", {
                 method: 'POST',
                 headers: {
@@ -59,6 +56,7 @@ export default function Auth({ children }) {
         try {
             setLoading(true)
             const auth = await fetch("/api/user/auth")
+            console.log(auth.status)
             if (!auth.ok) {
                 if (loc.pathname == "/" || loc.pathname == "/login") {
                     rout("/login")

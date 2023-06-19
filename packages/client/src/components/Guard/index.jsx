@@ -3,6 +3,7 @@ import { Box, CircularProgress, Grid, ThemeProvider, Typography, createTheme } f
 import Sidebar from "../Sidebar";
 import PropTypes from "prop-types"
 import NavBar from "../NavBar";
+import { useLocation } from "react-router-dom";
 
 const theme = createTheme({
     typography: {
@@ -12,7 +13,8 @@ const theme = createTheme({
 
 export default function Guard({ children }) {
     const auth = useAuth()
-    if (auth.loading && auth.user == null) {
+    const loc = useLocation()
+    if (auth.loading || (loc.pathname != "/login" && auth.user == null)) {
         return (
             <Box height={"100vh"}>
                 <Grid container alignItems={"center"} justifyContent={"center"} direction={"column"} height={"100%"}>
