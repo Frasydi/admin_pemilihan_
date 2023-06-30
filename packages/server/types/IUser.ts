@@ -10,6 +10,7 @@ export const ZuserAdd = z.object({
     username: z.string().nonempty().regex(/^[^\s]+$/, "Tidak boleh ada spasi"),
     password: z.string().nonempty().regex(/^[^\s]+$/, "Tidak boleh ada spasi"),
     role: z.enum(["super_admin", "kandidat_admin", "pemilihan_admin", "tim_admin", "anggota_admin"]),
+    kecamatan : z.string().nonempty(),
 })
 
 export const ZUserNewPassword = z.object({

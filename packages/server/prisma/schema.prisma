@@ -65,6 +65,8 @@ model user {
   username String @unique
   password String 
   role String
+  kecamatan String?
+  kelurahan String?
 }
 
 model notifikasi {
