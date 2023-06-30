@@ -8,6 +8,18 @@ body, html {
 }
 
 
+::-webkit-scrollbar {
+  width: 5px;
+}
+ 
+::-webkit-scrollbar-thumb {
+  background: #ddd; 
+}
+
+::-webkit-scrollbar-track {
+  background: #666; 
+}
+
 
 /* CSS */
 .button-10 {

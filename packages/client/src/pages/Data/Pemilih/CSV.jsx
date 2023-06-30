@@ -1,10 +1,9 @@
 import { Box, Button, Drawer, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material"
 import PropTypes from "prop-types"
-import { useRef, useState } from "react"
+import {  useState } from "react"
 import { z } from "zod";
 import { useCSVReader } from 'react-papaparse';
 import Swal from "sweetalert2";
-import { TopButton } from "../../../components/Button";
 
 const JenisKelaminEnum = z.enum(['L', 'P']);
 
@@ -34,6 +33,7 @@ const PemilihSchema = z.object({
 
 
 
+
 export default function AddCSVPemilih({ refetch }) {
 
     const [open, setOpen] = useState(false)
@@ -42,7 +42,7 @@ export default function AddCSVPemilih({ refetch }) {
     const [Error, setError] = useState(null)
     const handleOnFileLoad = (data) => {
         console.log(data)
-        const newData = data.map(({kandidatId, ...data}) => {
+        const newData = data.map(({kandidatId : _, ...data}) => {
             try {
                 const validation = PemilihSchema.safeParse(data)
                 if (validation.success === false) {
