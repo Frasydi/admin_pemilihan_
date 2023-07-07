@@ -4,7 +4,7 @@ import { IResult } from "../types/Iresult";
 import prisma from "../prisma/prisma";
 import { createNotifikasi } from "./Notifikasi";
 
-export async function getAllPemilih(query: IPemilih): IResult<Pemilih[]> {
+export async function getAllPemilih(query: IPemilih, kelurahan : string): IResult<Pemilih[]> {
     try {
         const { jenis_kelamin, ...data }: any = query
         let option: any = {}
@@ -13,9 +13,13 @@ export async function getAllPemilih(query: IPemilih): IResult<Pemilih[]> {
                 contains: data[el]
             }
         })
+        if(kelurahan != "all") {
+            option.kelurahan = kelurahan
+        }
         if (jenis_kelamin != "Semua") {
             option.jenis_kelamin = jenis_kelamin
         }
+        console.log(option.jenis_kelamin)
         const result = await prisma.pemilih.findMany({
             where: option,
             include: {
@@ -245,7 +249,7 @@ export async function addManyPemilih(pemilih : IPemilihAdd[], username : string)
                 })
                 return result
             }catch(err) {
-                
+                console.log(err)
             }
         })
 

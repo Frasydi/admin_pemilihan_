@@ -56,7 +56,7 @@ export default function Sidebar() {
           <Grow in={show}>
             <Grid item sx={{ width: 200, height: 200 }} alignSelf={"center"}>
               <img
-                src="asset 2.png"
+                src="/asset 2.png"
                 style={{ width: "100%", height: "100%" }}
               />
             </Grid>

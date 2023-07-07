@@ -63,7 +63,8 @@ export async function Auth(token : string) {
         data: {
             username: auth.decoded?.username || "",
             id: auth.decoded?.id || -1,
-            role : auth.decoded?.role || ""
+            role : auth.decoded?.role || "",
+            kelurahan : auth.decoded?.kelurahan || ""
         }
     }
 

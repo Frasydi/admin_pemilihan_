@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, Drawer, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Radio, RadioGroup, Select, TextField, Typography } from "@mui/material";
-import {  useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { tableHeader } from ".";
@@ -12,31 +12,34 @@ import { kelurahan } from "../../../utils/dataUtil";
 export default function EditPemilih() {
     const dpt = useDPT()
     const [open, setOpen] = useState(false)
-    const { register, handleSubmit, setError,formState: { errors }, watch, reset } = useForm({
+    const { register, handleSubmit, setError, formState: { errors }, watch } = useForm({
         mode: "onBlur",
-        values : dpt.data,
+        values: dpt.data,
         resolver: zodResolver(z.object({
             nik: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             nkk: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             nama: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             alamat: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
-            jenis_kelamin: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
+            tempat_lahir: z.string().nonempty(),
+            status_kawin: z.enum(["SUDAH_MENIKAH", "BELUM_MENIKAH"]),
+            jenis_kelamin: z.enum(["L", "P"]),
             kelurahan: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             kecamatan: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
-            rt : z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
-            rw : z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
+            rt: z.string().nonempty("Tidak boleh Kosong").max(200, "Maksimal 200 huruf"),
+            rw: z.string().nonempty("Tidak boleh Kosong").max(200, "Maksimal 200 huruf"),
+            tps: z.string().nonempty()
         }))
     });
 
     function submit(data) {
         const result = dpt.edit(dpt.data.id, data)
-        if(result.status === false) {
-            setError("nik", {message : result.message})
+        if (result.status === false) {
+            setError("nik", { message: result.message })
             return
         }
 
         setOpen(false)
-        
+
     }
 
     const watchKecamatan = watch("kecamatan")
@@ -48,9 +51,9 @@ export default function EditPemilih() {
         console.log(result)
         return result
     }, [watchKecamatan])
-    
+
     useEffect(() => {
-        if(dpt.data?.nama == null) return
+        if (dpt.data?.nama == null) return
         setOpen(true)
     }, [dpt.data?.nama])
 
@@ -96,35 +99,63 @@ export default function EditPemilih() {
                                                 </Select>
                                             </FormControl>
                                         </Grid>
-                                        
+
                                     </>
 
                                     )
-                                } else if(el == "Kelurahan") {
+                                } else if (el == "Kelurahan") {
                                     return (
                                         <>
-                                        <Grid item>
-                                            <FormControl fullWidth>
-                                                <InputLabel id="kecamatan-id">Kelurahan</InputLabel>
-                                                <Select
-                                                    labelId="kecamatan-id"
-                                                    label="Kelurahan"
-                                                    size="small"
-                                                    error={!!errors.kelurahan}
-                                                    helperText={errors.kelurahan?.message}
-                                                    defaultValue={dpt.data?.kelurahan || ""}
-                                                    {...register("kelurahan")}
-                                                >
-                                                    {
-                                                        kelurahan2?.map(el => (
-                                                            <MenuItem key={el} value={el}>
-                                                                {el}</MenuItem>
-                                                        ))
-                                                    }
+                                            <Grid item>
+                                                <FormControl fullWidth>
+                                                    <InputLabel id="kecamatan-id">Kelurahan</InputLabel>
+                                                    <Select
+                                                        labelId="kecamatan-id"
+                                                        label="Kelurahan"
+                                                        size="small"
+                                                        error={!!errors.kelurahan}
+                                                        helperText={errors.kelurahan?.message}
+                                                        defaultValue={dpt.data?.kelurahan || ""}
+                                                        {...register("kelurahan")}
+                                                    >
+                                                        {
+                                                            kelurahan2?.map(el => (
+                                                                <MenuItem key={el} value={el}>
+                                                                    {el}</MenuItem>
+                                                            ))
+                                                        }
 
-                                                </Select>
-                                            </FormControl>
-                                        </Grid>
+                                                    </Select>
+                                                </FormControl>
+                                            </Grid>
+                                        </>
+                                    )
+                                } else if (el == "Status Kawin") {
+                                    return (
+                                        <>
+                                            <Grid item>
+                                                <FormControl fullWidth>
+                                                    <InputLabel id="status-kawin-id">Status Kawin</InputLabel>
+                                                    <Select
+                                                        labelId="status-kawin-id"
+                                                        label="Status Kawin"
+                                                        size="small"
+                                                        error={!!errors.status_kawin}
+                                                        helperText={errors.status_kawin?.message}
+                                                        defaultValue={dpt.data?.status_kawin || ""}
+                                                        {...register("status_kawin")}
+                                                    >
+
+                                                        <MenuItem key={"status-kawin-menikah"} value={"SUDAH_MENIKAH"}>
+                                                            Sudah Menikah</MenuItem>
+                                                        <MenuItem key={"status-kawin-belum-menikah"} value={"BELUM_MENIKAH"}>
+                                                           Belum Menikah</MenuItem>
+
+
+
+                                                    </Select>
+                                                </FormControl>
+                                            </Grid>
                                         </>
                                     )
                                 }

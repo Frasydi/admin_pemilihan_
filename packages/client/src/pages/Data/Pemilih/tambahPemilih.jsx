@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, Drawer, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Radio, RadioGroup, Select, TextField, Typography } from "@mui/material";
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { tableHeader } from ".";
@@ -20,11 +20,14 @@ export default function TambahPemilih({ tambah }) {
             nkk: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             nama: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             alamat: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
+            tempat_lahir: z.string().nonempty(),
+            status_kawin: z.enum(["SUDAH_MENIKAH", "BELUM_MENIKAH"]),
             jenis_kelamin: z.enum(["L", "P"]),
             kelurahan: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             kecamatan: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             rt: z.string().nonempty("Tidak boleh Kosong").max(200, "Maksimal 200 huruf"),
             rw: z.string().nonempty("Tidak boleh Kosong").max(200, "Maksimal 200 huruf"),
+            tps: z.string().nonempty()
         }))
     });
 
@@ -70,6 +73,7 @@ export default function TambahPemilih({ tambah }) {
                         </Grid>
                         {
                             tableHeader.filter(el => el != "#" && el != "Aksi" && el != "kandidat").map((el, ind) => {
+
                                 if (el == "Kecamatan") {
                                     return (<>
                                         <Grid item>
@@ -93,35 +97,63 @@ export default function TambahPemilih({ tambah }) {
                                                 </Select>
                                             </FormControl>
                                         </Grid>
-                                        
+
                                     </>
 
                                     )
-                                } else if(el == "Kelurahan") {
+                                } else if (el == "Kelurahan") {
                                     return (
                                         <>
-                                        <Grid item>
-                                            <FormControl fullWidth>
-                                                <InputLabel id="kecamatan-id">Kelurahan</InputLabel>
-                                                <Select
-                                                    labelId="kecamatan-id"
-                                                    label="Kelurahan"
-                                                    size="small"
-                                                    error={!!errors.kelurahan}
-                                                    helperText={errors.kelurahan?.message}
+                                            <Grid item>
+                                                <FormControl fullWidth>
+                                                    <InputLabel id="kecamatan-id">Kelurahan</InputLabel>
+                                                    <Select
+                                                        labelId="kecamatan-id"
+                                                        label="Kelurahan"
+                                                        size="small"
+                                                        error={!!errors.kelurahan}
+                                                        helperText={errors.kelurahan?.message}
 
-                                                    {...register("kelurahan")}
-                                                >
-                                                    {
-                                                        kelurahan2?.map(el => (
-                                                            <MenuItem key={el} value={el}>
-                                                                {el}</MenuItem>
-                                                        ))
-                                                    }
+                                                        {...register("kelurahan")}
+                                                    >
+                                                        {
+                                                            kelurahan2?.map(el => (
+                                                                <MenuItem key={el} value={el}>
+                                                                    {el}</MenuItem>
+                                                            ))
+                                                        }
 
-                                                </Select>
-                                            </FormControl>
-                                        </Grid>
+                                                    </Select>
+                                                </FormControl>
+                                            </Grid>
+                                        </>
+                                    )
+                                } else if (el == "Status Kawin") {
+                                    return (
+                                        <>
+                                            <Grid item>
+                                                <FormControl fullWidth>
+                                                    <InputLabel id="status-kawin-id">Status Kawin</InputLabel>
+                                                    <Select
+                                                        labelId="status-kawin-id"
+                                                        label="Status Kawin"
+                                                        size="small"
+                                                        error={!!errors.status_kawin}
+                                                        helperText={errors.status_kawin?.message}
+
+                                                        {...register("status_kawin")}
+                                                    >
+
+                                                        <MenuItem key={"status-kawin-menikah"} value={"SUDAH_MENIKAH"}>
+                                                            Sudah Menikah</MenuItem>
+                                                        <MenuItem key={"status-kawin-belum-menikah"} value={"BELUM_MENIKAH"}>
+                                                           Belum Menikah</MenuItem>
+
+
+
+                                                    </Select>
+                                                </FormControl>
+                                            </Grid>
                                         </>
                                     )
                                 }

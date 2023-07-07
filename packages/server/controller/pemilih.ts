@@ -1,10 +1,11 @@
+import { kelurahan } from './../util/dataUtil';
 import { Pemilih } from "@prisma/client";
 import { IResult } from "../types/Iresult";
 import { IPemilih, IPemilihAdd, ZPemilih, ZPemilihAdd } from "../types/IPemilih";
 import { addManyPemilih, delPemilih, getAllPemilih, getAllPendukung, postPemilih, putPemilih, putPemilihKandidat, selectPemilih } from "../service/pemilih";
 import { z } from "zod";
 
-export async function AllPemilih(query : IPemilih) : IResult<Pemilih[]> {
+export async function AllPemilih(query : IPemilih, kelurahan : string) : IResult<Pemilih[]> {
     const validation = ZPemilih.safeParse(query)
     if(validation.success === false) {
         return {
@@ -14,7 +15,7 @@ export async function AllPemilih(query : IPemilih) : IResult<Pemilih[]> {
         }
     }
 
-    return await getAllPemilih(validation.data)
+    return await getAllPemilih(validation.data, kelurahan)
 }
 
 export async function AllPendukung(query : IPemilih) : IResult<Pemilih[]> {

@@ -1,15 +1,17 @@
 import jwt, { Jwt } from "jsonwebtoken"
 
-export function createToken(user : {id : number, username : string, password : string, role : string}) {
+export function createToken(user : {id : number, username : string, password : string, role : string, kelurahan? : string | null}) {
     const token = jwt.sign({
         id: user.id,
         username: user.username,
-        role : user.role
+        role : user.role,
+        kelurahan : user.kelurahan
+
     }, process.env.SECRET_KEY || "", { expiresIn: "1h" })
     return token
 }
 
-export function verifyToken(token : string) : {message : string, status : boolean, decoded? : {username : string, id : number, role : string}} {
+export function verifyToken(token : string) : {message : string, status : boolean, decoded? : {username : string, id : number, role : string, kelurahan : string}} {
     try {
         const decoded : any = jwt.verify(token, process.env.SECRET_KEY || "");
         return {

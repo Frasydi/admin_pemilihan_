@@ -23,22 +23,22 @@ export default function Login() {
     const auth = useAuth()
     const { register, handleSubmit, formState: { errors }, setError } = useForm({
         mode: "onBlur",
-        resolver : zodResolver(z.object({
-            username : z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf").regex(/^[^\s]+$/, "Tidak boleh ada spasi"),
-            password : z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf").regex(/^[^\s]+$/, "Tidak boleh ada spasi")
+        resolver: zodResolver(z.object({
+            username: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf").regex(/^[^\s]+$/, "Tidak boleh ada spasi"),
+            password: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf").regex(/^[^\s]+$/, "Tidak boleh ada spasi")
         }))
     });
 
     async function submit(val) {
         console.log(val)
         auth.login(val, (err) => {
-            setError("username", {message : err})
+            setError("username", { message: err })
         })
 
     }
-    
 
-    function CustomTextField({name, ...props}) {
+
+    function CustomTextField({ name, ...props }) {
         return (
             <TextField {...register(name)} {...props} sx={{
                 width: "100%", padding: 0,
@@ -51,29 +51,32 @@ export default function Login() {
                     padding: 1
                 },
             }}
-    
+
             />
         )
     }
-    CustomTextField.propTypes  = {
-        name : PropsType.string.isRequired
+    CustomTextField.propTypes = {
+        name: PropsType.string.isRequired
     }
     return (
         <>
-            <Box sx={{ minHeight: "100vh", backgroundColor: "#C2BFB7" }}>
+            <Box sx={{ minHeight: "100vh", backgroundImage: "url('asset 1.png')", backgroundRepeat: "no-repeat", backgroundSize: "cover", backgroundPosition: "center" }}>
                 <Grid container direction={"column"} alignItems={"center"} paddingY={15}>
                     <Grid item>
-                        <Typography variant="h2" sx={{ fontFamily: "Playfair, serif" }}>
-                            Login
-                        </Typography>
+
                     </Grid>
                     <Grid item mt={2}>
 
                         <Paper elevation={0} sx={{ width: "35vw", minHeight: "40vh", background: "whitesmoke", padding: "1.2rem" }}>
                             <Box component={"form"} onSubmit={handleSubmit(submit)} noValidate >
                                 <Grid container direction={"column"} justifyContent={"center"} alignItems="center" width={"100%"}>
+                                    <Grid item>
+                                        <Typography variant="h3" sx={{ fontFamily: "Playfair, serif" }}>
+                                            Admin Fadli Ananda
+                                        </Typography>
+                                    </Grid>
                                     <Grid item xs={12} sx={{ marginTop: "2rem", width: "90%" }}>
-                                        <CustomTextField placeholder={"Masukkan nama pengguna"} type="text" id="username" autoComplete="username" autoFocus  name={"username"} />
+                                        <CustomTextField placeholder={"Masukkan nama pengguna"} type="text" id="username" autoComplete="username" autoFocus name={"username"} />
                                         {errors.username && <Typography variant="body2" color={"red"}>{errors.username.message}</Typography>}
                                     </Grid>
                                     <Grid item xs={12} sx={{ marginTop: "2rem", width: "90%" }}>

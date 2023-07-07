@@ -25,17 +25,26 @@ model kandidat {
 model Pemilih {
   id Int @id @default(autoincrement())
   nik            String @unique
-  nkk            String @unique
+  nkk            String 
   nama           String
+  tempat_lahir String
+  status_kawin Status_Kawin
   jenis_kelamin   Jenis_Kelamin
   alamat         String
   rt             String
   rw             String
   kelurahan      String
   kecamatan      String
+  tps String
   kandidatId Int? 
   kandidat kandidat? @relation(fields: [kandidatId], references: [id], onDelete: Cascade)
   anggota_tim Anggota_Tim?
+}
+
+enum Status_Kawin {
+  SUDAH_MENIKAH
+  BELUM_MENIKAH
+
 }
 
 enum Jenis_Kelamin {

@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
-import { Box, Button, Collapse, Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography, tableCellClasses } from "@mui/material";
+import { Box, Button, Collapse, Grid, Pagination, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography, tableCellClasses } from "@mui/material";
 import TambahPemilih from "./tambahPemilih";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
 import EditPemilih from "./editPemilih";
 import PemilihList from "./pemilihlist";
@@ -33,7 +33,7 @@ export const CustomCell = styled(TableCell)`
     }
 `
 
-export const tableHeader = ["#", "NIK", "NKK", "Nama", "Alamat", "Jenis Kelamin", "Kecamatan", "Kelurahan", "RT", "RW", "kandidat", "Aksi"]
+export const tableHeader = ["#", "NIK", "NKK", "Nama", "Alamat", "Tempat Lahir","Status Kawin","Jenis Kelamin", "Kecamatan", "Kelurahan", "RT", "RW", "TPS","kandidat", "Aksi"]
 export const PemilihContext = createContext({
     data: null,
     setData: () => { },
@@ -55,7 +55,23 @@ export default function DataPemilih() {
     const [input, setInput] = useState(null)
     const [selData, setSelData] = useState([])
     const [pendukungCollapse, setPendukungCollapse] = useState(false)
+    const [page, setPage] = useState(1);
+    const countData = useMemo(() => {
+        if(data == null) return 0;
+        return Math.ceil(data.length / 10);
+    }, [data])
+    const tempData = useMemo(() => {
+        if(data == null) return []
+        if (data.length <= 0) return [];
+        const startIndex = (page-1) * 10;
+        const endIndex = startIndex + 10;
 
+        // Get the subset of data for the current page
+        const newData= data.slice(startIndex, endIndex);
+        console.log(newData);
+        return newData;
+
+    }, [data, page])
 
     async function tambahDataPemilih(data) {
         try {
@@ -277,15 +293,16 @@ export default function DataPemilih() {
                                     </TableHead>
                                     <TableBody>
                                         {
-                                            isLoading === false && data?.map((el, ind) => (
+                                            isLoading === false && tempData?.map((el, ind) => (
                                                 <>
-                                                    <PemilihList key={ind + "ind"} sel={selData.includes(el.id)} setSelected={setSelected} el={el} ind={ind} />
+                                                    <PemilihList key={ind + "ind"} sel={selData.includes(el.id)} setSelected={setSelected} el={el} ind={Math.floor((page-1) * 10)+ind} />
                                                 </>
                                             ))
                                         }
                                     </TableBody>
 
                                 </CustomTable>
+                                <Pagination count={countData} page={page} onChange={(ev, newPage) => setPage(newPage)} size="large" />
                                 <EditPemilih />
                             </PemilihContext.Provider>
                         </Grid>

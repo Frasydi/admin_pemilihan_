@@ -5,13 +5,14 @@ import { AuthMiddleware, CustomRequest } from "../util/auth";
 const PemilihRouter = Router()
 
 PemilihRouter.get("/", AuthMiddleware, async (req, res) => {
+    const user = (req as CustomRequest).auth
     //@ts-ignore
-    if (!["super_admin", "pemilihan_admin"].includes(req.auth.role)) return res.status(403).json({
+    if (!["super_admin", "pemilihan_admin"].includes(user.role)) return res.status(403).json({
         message: "You are not allowed to access this",
         code: 403,
         status: false
     })
-    const result = await AllPemilih(req.query as any)
+    const result = await AllPemilih(req.query as any, user.kelurahan || "all")
     return res.status(result.code).json(result)
 })
 
