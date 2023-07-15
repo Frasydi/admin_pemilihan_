@@ -24,7 +24,7 @@ export default function KandidatItem({ item }) {
             image={
               item?.gambar != null ? "/api/gambar/" + item.gambar : "/blank.png"
             }
-            sx={{ width: 300, height: 300, objectFit: "contain", backgroundSize : "contain" }}
+            sx={{  objectFit: "cover", backgroundPosition:"center", backgroundSize : "contain" }}
           ></CardMedia>
           <CardContent>
             <Typography variant="h6">{item?.nama}</Typography>

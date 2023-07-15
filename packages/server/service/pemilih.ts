@@ -1,8 +1,8 @@
 import { Pemilih, Prisma } from "@prisma/client";
-import { IPemilih, IPemilihAdd } from "../types/IPemilih";
+import { IPemilih, IPemilihAdd, IPemilihMemilih } from "../types/IPemilih";
 import { IResult } from "../types/Iresult";
 import prisma from "../prisma/prisma";
-import { createNotifikasi } from "./Notifikasi";
+import { createNotifikasi, createNotifikasiWithLocation } from "./Notifikasi";
 
 export async function getAllPemilih(query: IPemilih, kelurahan : string): IResult<Pemilih[]> {
     try {
@@ -141,9 +141,9 @@ export async function putPemilih(id: number, data: IPemilihAdd, username : strin
     }
 }
 
-export async function putPemilihKandidat(kandidatId: number, dataId: number[], username : string) {
+export async function putPemilihKandidat(kandidatId: number, data : IPemilihMemilih, username : string) {
     try {
-        const promise = dataId.map(async (id) => {
+        const promise = data.dataId.map(async (id) => {
             try {
                 await prisma.pemilih.update({
                     where: {
@@ -162,7 +162,8 @@ export async function putPemilihKandidat(kandidatId: number, dataId: number[], u
             }
         })
         await Promise.all(promise)
-        await createNotifikasi(`Pemilih dengan id ${dataId} berhasil dihubungkan dengan kandidat ${kandidatId} oleh ${username}`)
+        const { latitude, longitude } = data.location;
+        await createNotifikasiWithLocation(`Pemilih dengan id ${data.dataId} berhasil dihubungkan dengan kandidat ${kandidatId} oleh ${username}`, latitude, longitude)
         return {
             status: true,
             code: 200,

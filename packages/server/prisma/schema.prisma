@@ -28,14 +28,15 @@ model Pemilih {
   nkk            String 
   nama           String
   tempat_lahir String
-  status_kawin Status_Kawin
-  jenis_kelamin   Jenis_Kelamin
+  sts_kawin Status_Kawin
+  jenis_kelamin  Jenis_Kelamin
   alamat         String
   rt             String
   rw             String
   kelurahan      String
   kecamatan      String
-  tps String
+  tps String?
+  no_hp String?
   kandidatId Int? 
   kandidat kandidat? @relation(fields: [kandidatId], references: [id], onDelete: Cascade)
   anggota_tim Anggota_Tim?

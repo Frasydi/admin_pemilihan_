@@ -7,7 +7,7 @@ export function createToken(user : {id : number, username : string, password : s
         role : user.role,
         kelurahan : user.kelurahan
 
-    }, process.env.SECRET_KEY || "", { expiresIn: "1h" })
+    }, process.env.SECRET_KEY || "", { expiresIn: "1d" })
     return token
 }
 

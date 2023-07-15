@@ -15,6 +15,7 @@ import AnggotaTim from "./pages/Data/Kandidat/id/Tim/Anggota";
 import Recap from "./pages/Rekap";
 import UserProfile from "./pages/Profile";
 import User from "./pages/User";
+import NotifikasiPage from "./pages/Notifikasi";
 
 const router = createBrowserRouter([
   {
@@ -105,6 +106,10 @@ const router = createBrowserRouter([
       {
         path : "/users",
         element : <User/>
+      },
+      {
+        path : "/notifikasi",
+        element : <NotifikasiPage/>
       }
     ]
   },

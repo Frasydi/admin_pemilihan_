@@ -8,7 +8,7 @@ export default function KandidatItem({ item, isSelected }) {
                 <CardActionArea onClick={() => {
                     isSelected(item.id)
                 }} >
-                    <CardMedia sx={{ height: 200, width:200, objectFit:"center" }} image={item.gambar!= null ? "/api/gambar/"+item.gambar : "/blank.png"} />
+                    <CardMedia sx={{ objectFit:"cover", width :"100%", height :"300px" }} image={item.gambar!= null ? "/api/gambar/"+item.gambar : "/blank.png"} />
                     <CardContent>
                         <Typography variant="h5" align="center">
                             {item.nama}

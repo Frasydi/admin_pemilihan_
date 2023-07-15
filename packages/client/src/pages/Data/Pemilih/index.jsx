@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Box, Button, Collapse, Grid, Pagination, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography, tableCellClasses } from "@mui/material";
+import { Box, Button, Grid, Pagination, Paper, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Typography, tableCellClasses } from "@mui/material";
 import TambahPemilih from "./tambahPemilih";
 import { createContext, useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
@@ -9,6 +9,9 @@ import KandidatItem from "./kandidatItems";
 import useFetch from "../../../hooks/useFetch";
 import FilterPemilih from "./filterPemilih";
 import AddCSVPemilih from "./CSV";
+import useAuth from "../../../hooks/useAuth";
+import Loading from "../../../utils/Loading";
+import getLocation from "../../../utils/location";
 
 export const CustomTable = styled(Table)(({ theme }) => ({
 
@@ -30,10 +33,11 @@ export const CustomCell = styled(TableCell)`
     &.${tableCellClasses.head} {
         color : whitesmoke;
         font-weight: bold;
+        
     }
 `
 
-export const tableHeader = ["#", "NIK", "NKK", "Nama", "Alamat", "Tempat Lahir","Status Kawin","Jenis Kelamin", "Kecamatan", "Kelurahan", "RT", "RW", "TPS","kandidat", "Aksi"]
+export const tableHeader = ["#", "NIK", "NKK", "Nama", "Alamat", "Tempat Lahir", "Status Kawin", "Jenis Kelamin", "Kecamatan", "Kelurahan", "RT", "RW", "No HP", "TPS", "kandidat", "Aksi"]
 export const PemilihContext = createContext({
     data: null,
     setData: () => { },
@@ -50,24 +54,26 @@ export default function DataPemilih() {
         kelurahan: "",
         kecamatan: ""
     })
+    const [rows, setRows] = useState(10)
     const { data, isLoading, refetch } = useFetch(`/api/pemilih?${new URLSearchParams(filter)}`)
-    const { data: data2, isLoading: isLoading2, refetch: refetch2 } = useFetch("/api/kandidat?search=")
+    const { data: data2, isLoading: isLoading2, refetch: refetch2, isError: isError2 } = useFetch("/api/kandidat?search=")
     const [input, setInput] = useState(null)
     const [selData, setSelData] = useState([])
     const [pendukungCollapse, setPendukungCollapse] = useState(false)
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(0);
     const countData = useMemo(() => {
-        if(data == null) return 0;
+        if (data == null) return 0;
         return Math.ceil(data.length / 10);
     }, [data])
+    const { user } = useAuth()
     const tempData = useMemo(() => {
-        if(data == null) return []
+        if (data == null) return []
         if (data.length <= 0) return [];
-        const startIndex = (page-1) * 10;
+        const startIndex = page * 10;
         const endIndex = startIndex + 10;
 
         // Get the subset of data for the current page
-        const newData= data.slice(startIndex, endIndex);
+        const newData = data.slice(startIndex, endIndex);
         console.log(newData);
         return newData;
 
@@ -185,26 +191,38 @@ export default function DataPemilih() {
     }
 
     async function masukkanKePendukung(id) {
-        try {
-            const fet = await fetch("/api/pemilih/memilih/" + id, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ dataId: selData })
-            })
-            const json = await fet.json()
-            console.log(json.message)
-            if (fet.ok === false) {
-                return
+        Loading.fire()
+        getLocation(async (location) => {
+            try {
+
+                console.log(location)
+                const fet = await fetch("/api/pemilih/memilih/" + id, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ dataId: selData, location: location })
+                })
+                const json = await fet.json()
+                console.log(json.message)
+                if (fet.ok === false) {
+                    Swal.fire("Gagal", json.message, "error")
+                    return
+                }
+                Swal.fire("Berhasil", "Berhasil menambahkan pendukung", "success")
+                setPendukungCollapse(false)
+                setSelData([])
+                refetch()
+                refetch2()
+            } catch (err) {
+                Swal.fire("Gagal", "Server Error", "error")
+                console.log(err)
             }
-            Swal.fire("Berhasil", "Berhasil menambahkan pendukung")
-            setPendukungCollapse(false)
-            refetch()
-            refetch2()
-        } catch (err) {
-            console.log(err)
-        }
+
+        }, () => {
+            Swal.fire("Error", "Geo Lokasi tidak aktif atau diblokir, harap aktifkan geo lokasi terlebih dahulu", "error")
+        })
+
 
     }
 
@@ -258,20 +276,31 @@ export default function DataPemilih() {
                         </Grid>
                         <Grid item xs={12}>
                             <Grid container spacing={3}>
-                                <Grid item>
-                                    <TambahPemilih tambah={tambahDataPemilih} />
-                                </Grid>
+                                {
+                                    user.role == "super_admin" && <Grid item>
+                                        <TambahPemilih tambah={tambahDataPemilih} />
+                                    </Grid>
+                                }
+
                                 <Grid item>
                                     <FilterPemilih filter={filter} setFilter={setFilter} />
                                 </Grid>
-                                <Grid item>
-                                    <Button variant="outlined" onClick={exportToCsv}>
-                                        Export
-                                    </Button>
-                                </Grid>
-                                <Grid item>
-                                    <AddCSVPemilih refetch={refetch} />
-                                </Grid>
+                                {
+                                    user.role == "super_admin" &&
+
+                                    <>
+                                        <Grid item>
+                                            <Button variant="outlined" onClick={exportToCsv}>
+                                                Export
+                                            </Button>
+                                        </Grid>
+                                        <Grid item>
+                                            <AddCSVPemilih refetch={refetch} />
+                                        </Grid>
+                                    </>
+                                }
+
+
                             </Grid>
                         </Grid>
                         <Grid item xs={12} sx={{ overflow: "auto", width: "100%" }}>
@@ -295,14 +324,21 @@ export default function DataPemilih() {
                                         {
                                             isLoading === false && tempData?.map((el, ind) => (
                                                 <>
-                                                    <PemilihList key={ind + "ind"} sel={selData.includes(el.id)} setSelected={setSelected} el={el} ind={Math.floor((page-1) * 10)+ind} />
+                                                    <PemilihList key={ind + "ind"} sel={selData.includes(el.id)} setSelected={setSelected} el={el} ind={Math.floor((page ) * 10) + ind} />
                                                 </>
                                             ))
                                         }
                                     </TableBody>
 
                                 </CustomTable>
-                                <Pagination count={countData} page={page} onChange={(ev, newPage) => setPage(newPage)} size="large" />
+                                <TablePagination
+                                    component="div"
+                                    count={countData}
+                                    page={page}
+                                    onPageChange={(ev, newPage) => setPage(newPage)}
+                                    rowsPerPage={rows}
+                                    onRowsPerPageChange={(ev, newRows) => setRows(newRows)}
+                                />
                                 <EditPemilih />
                             </PemilihContext.Provider>
                         </Grid>
@@ -315,7 +351,15 @@ export default function DataPemilih() {
                                     }}>Tambahkan ke Pendukung</Button>
                                 </Grid>
                                 {
-                                    pendukungCollapse ?
+                                    isError2 && <Grid item>
+                                        <Typography>
+                                            Ada masalah
+                                        </Typography>
+                                    </Grid>
+                                }
+                                {
+                                    pendukungCollapse &&
+                                    <>
                                         <Grid item xs={12}>
                                             <Grid container >
                                                 {
@@ -326,27 +370,20 @@ export default function DataPemilih() {
                                                     ))
                                                 }
                                             </Grid>
+
+                                        </Grid>
+                                        <Grid item>
                                             <Button size={"small"} variant="contained" color="error" onClick={() => setPendukungCollapse(false)}>
                                                 Batalkan
                                             </Button>
                                         </Grid>
-                                        : <></>
+                                    </>
+
+
                                 }
                             </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                            <Collapse in={pendukungCollapse}>
-                                <Grid container spacing={3}>
-                                    {/* {
-                                        kandidatData.map((el, ind) => (
-                                            <Grid item key={ind} xs={4}>
-                                                <KandidatItem key={ind + 1} item={el} isSelected={masukkanKePendukung} />
-                                            </Grid>
-                                        ))
-                                    } */}
-                                </Grid>
-                            </Collapse>
-                        </Grid>
+
                     </Grid>
                 </Paper>
             </Box>

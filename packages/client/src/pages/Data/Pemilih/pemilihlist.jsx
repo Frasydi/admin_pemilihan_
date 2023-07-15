@@ -21,11 +21,11 @@ export default function PemilihList({ el, ind, setSelected, sel }) {
                     if(key == "kandidatId") {
                         console.log(key)
                         return (
-                            <CustomCell key={key}> {el[key] != null? el?.kandidat?.nama :"Belum Memilih"}</CustomCell>
+                            <CustomCell align="center" key={key}> {el[key] != null? el?.kandidat?.nama :"Belum Memilih"}</CustomCell>
                         )
                     }
                     return (
-                        <CustomCell key={key}>{el[key]}</CustomCell>
+                        <CustomCell align="center" key={key}>{el[key]}</CustomCell>
                     )
                 })
             }

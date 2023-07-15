@@ -1,7 +1,7 @@
 import { kelurahan } from './../util/dataUtil';
 import { Pemilih } from "@prisma/client";
 import { IResult } from "../types/Iresult";
-import { IPemilih, IPemilihAdd, ZPemilih, ZPemilihAdd } from "../types/IPemilih";
+import { IPemilih, IPemilihAdd, IPemilihMemilih, ZPemilih, ZPemilihAdd, ZPemilihMemilih } from "../types/IPemilih";
 import { addManyPemilih, delPemilih, getAllPemilih, getAllPendukung, postPemilih, putPemilih, putPemilihKandidat, selectPemilih } from "../service/pemilih";
 import { z } from "zod";
 
@@ -77,7 +77,7 @@ export async function editPemilih(id : number, data : IPemilihAdd, username : st
     return await putPemilih(id, validation.data, username )
 }
 
-export async function changePemilihKandidat(id : number, dataId : number[], username : string) :IResult<null>{
+export async function changePemilihKandidat(id : number, body : IPemilihMemilih, username : string) :IResult<null>{
     if(z.number().int().safeParse(id).success === false ) {
         return {
             status : false,
@@ -85,16 +85,17 @@ export async function changePemilihKandidat(id : number, dataId : number[], user
             message : "Id is not a number"
         }
     }
-    if(z.array(z.number().int()).safeParse(dataId).success === false ) {
+    const validation = ZPemilihMemilih.safeParse(body)
+    if(validation.success === false ) {
         return {
             status : false,
             code :400,
-            message : "Id is not a number"
+            message : validation.error.issues[0].path + " : "+ validation.error.issues[0].message,
         }
     
     }
     
-    return await putPemilihKandidat(id, dataId, username )
+    return await putPemilihKandidat(id, body, username )
 }
 
 export async function mencariPemilih(id : number, search : string) : IResult<Pemilih[]> {

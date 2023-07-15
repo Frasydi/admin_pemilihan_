@@ -25,8 +25,7 @@ export default function NavBar() {
 
   useEffect(() => {
     const scroll = addEventListener("scroll", () => {
-      console.log(window.scrollY);
-      console.log(isTop);
+      
       setIsTop(window.scrollY != 0);
     });
 

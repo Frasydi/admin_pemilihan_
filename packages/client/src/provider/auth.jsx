@@ -1,6 +1,9 @@
 import { createContext, useEffect, useState } from "react";
 import PropTypes from "prop-types"
 import { useLocation, useNavigate } from "react-router-dom";
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+
 export const AuthProvider = createContext(
     {
         user: null,
@@ -36,9 +39,9 @@ export default function Auth({ children }) {
             console.log(user)
             const searchParams = new URLSearchParams(loc.search);
             const redirect = searchParams.get('redirect');
-            rout(redirect != null ? redirect : "/")
             setUser(user)
             setLoading(false)
+            rout(redirect != null ? redirect : "/")
         }
         catch (err) {
             console.error(err)
@@ -99,9 +102,11 @@ export default function Auth({ children }) {
     }
     return (
         <>
-            <AuthProvider.Provider value={value} >
-                {children}
-            </AuthProvider.Provider>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <AuthProvider.Provider value={value} >
+                    {children}
+                </AuthProvider.Provider>
+            </LocalizationProvider>
         </>
     )
 }

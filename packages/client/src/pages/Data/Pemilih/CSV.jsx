@@ -6,7 +6,7 @@ import { useCSVReader } from 'react-papaparse';
 import Swal from "sweetalert2";
 import Loading from "../../../utils/Loading";
 
-const JenisKelaminEnum = z.enum(['L', 'P']);
+const JenisKelaminEnum = z.preprocess(val => val.toUpperCase() ,z.enum(['L', 'P']));
 
 const keysArray = [
     'nik',
@@ -29,7 +29,9 @@ const PemilihSchema = z.object({
     nkk: z.string().nonempty(),
     nama: z.string().nonempty(),
     tempat_lahir: z.string().nonempty(),
-    status_kawin: z.enum(["SUDAH_MENIKAH", "BELUM_MENIKAH"]),
+    sts_kawin: z.preprocess(val => {
+        return val.split(" ").join("_").toUpperCase();
+    }, z.enum(["SUDAH_MENIKAH", "BELUM_MENIKAH"])) ,
     jenis_kelamin: JenisKelaminEnum,
     alamat: z.string().nonempty(),
     rt: z.string().nonempty(),
@@ -50,18 +52,18 @@ export default function AddCSVPemilih({ refetch }) {
     const [Error, setError] = useState(null)
     const [page, setPage] = useState(1);
     const countData = useMemo(() => {
-        if(data == null) return 0;
+        if (data == null) return 0;
         return Math.ceil(data.length / 10);
     }, [data])
 
     const tempData = useMemo(() => {
-        if(data == null) return []
+        if (data == null) return []
         if (data.length <= 0) return [];
-        const startIndex = (page-1) * 10;
+        const startIndex = (page - 1) * 10;
         const endIndex = startIndex + 10;
 
         // Get the subset of data for the current page
-        const newData= data.slice(startIndex, endIndex);
+        const newData = data.slice(startIndex, endIndex);
         console.log(newData);
         return newData;
 
@@ -71,7 +73,12 @@ export default function AddCSVPemilih({ refetch }) {
         console.log(data)
         const newData = data.map(({ kandidatId: _, ...data }) => {
             try {
-                const validation = PemilihSchema.safeParse(data)
+                const newData = {}
+                Object.keys(data).forEach(key => {
+                    const newKey = key.split(" ").join("_").toLowerCase()
+                    newData[newKey] = data[key]
+                }) 
+                const validation = PemilihSchema.safeParse(newData)
                 if (validation.success === false) {
                     console.log(validation.error.issues[0].path + " : " + validation.error.issues[0].message)
                     return null
@@ -93,6 +100,7 @@ export default function AddCSVPemilih({ refetch }) {
         try {
             setOpen(false)
             Loading.fire()
+           
             const fetData = await fetch("/api/pemilih/many", {
                 method: "POST",
                 headers: {
@@ -186,7 +194,7 @@ export default function AddCSVPemilih({ refetch }) {
                                         tempData.map((el, ind) => (
                                             <TableRow key={el}>
                                                 <TableCell >
-                                                    {((page-1) * 10) + ind + 1}
+                                                    {((page - 1) * 10) + ind + 1}
                                                 </TableCell>
                                                 {
                                                     keysArray.map(el2 => (

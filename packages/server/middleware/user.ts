@@ -29,7 +29,7 @@ UserRouter.post("/login", async (req,res) => {
     const result = await Login(req.body)
     if(result.status) {
         res.cookie("token", result.data?.token, {
-            maxAge: 3600000,
+            maxAge: 24 * 60 * 60 * 1000,
         }).status(result.code).json(result)
         return
     }

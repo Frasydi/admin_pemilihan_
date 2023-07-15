@@ -9,6 +9,7 @@ import { kelurahan } from "../../../utils/dataUtil";
 
 // eslint-disable-next-line react/prop-types
 export default function TambahPemilih({ tambah }) {
+
     const [open, setOpen] = useState(false)
     const { register, setError, handleSubmit, formState: { errors }, watch, reset } = useForm({
         mode: "onBlur",
@@ -21,25 +22,26 @@ export default function TambahPemilih({ tambah }) {
             nama: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             alamat: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             tempat_lahir: z.string().nonempty(),
-            status_kawin: z.enum(["SUDAH_MENIKAH", "BELUM_MENIKAH"]),
+            sts_kawin: z.enum(["SUDAH_MENIKAH", "BELUM_MENIKAH"]),
             jenis_kelamin: z.enum(["L", "P"]),
             kelurahan: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             kecamatan: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             rt: z.string().nonempty("Tidak boleh Kosong").max(200, "Maksimal 200 huruf"),
             rw: z.string().nonempty("Tidak boleh Kosong").max(200, "Maksimal 200 huruf"),
-            tps: z.string().nonempty()
+            tps: z.string()
         }))
     });
 
     async function submit(data) {
         const result = await tambah(data)
-        console.log(result)
-        if (!result.status) {
-            setError("nik", { message: result.message })
-            return
-        }
-        setOpen(false)
-        reset()
+            console.log(result)
+            if (!result.status) {
+                setError("nik", { message: result.message })
+                return
+            }
+            setOpen(false)
+            reset()
+
 
     }
 
@@ -141,13 +143,13 @@ export default function TambahPemilih({ tambah }) {
                                                         error={!!errors.status_kawin}
                                                         helperText={errors.status_kawin?.message}
 
-                                                        {...register("status_kawin")}
+                                                        {...register("sts_kawin")}
                                                     >
 
                                                         <MenuItem key={"status-kawin-menikah"} value={"SUDAH_MENIKAH"}>
                                                             Sudah Menikah</MenuItem>
                                                         <MenuItem key={"status-kawin-belum-menikah"} value={"BELUM_MENIKAH"}>
-                                                           Belum Menikah</MenuItem>
+                                                            Belum Menikah</MenuItem>
 
 
 

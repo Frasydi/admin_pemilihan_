@@ -2,37 +2,100 @@ import prisma from "../prisma/prisma";
 
 export async function getNotifikasi() {
     try {
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
         const result = await prisma.notifikasi.findMany({
-            orderBy : {
-                created_at : "desc"
+            where: {
+                created_at: {
+                    gte: yesterday,
+                    lte: tomorrow,
+                }
             },
-            take : 10
+            orderBy: {
+                created_at: "desc"
+            },
+            take: 10
         })
         return {
-            status : true,
-            code : 200,
-            message : "OK",
-            data : result
+            status: true,
+            code: 200,
+            message: "OK",
+            data: result
         }
     } catch (err) {
         console.log(err)
         return {
-            status : true,
-            code : 500,
-            message : "Server Error",
+            status: true,
+            code: 500,
+            message: "Server Error",
 
         }
     }
 }
 
-export async function createNotifikasi(isi : string) {
+export async function getNotifikasiByDate(date: number) {
     try {
-        await prisma.notifikasi.create({
-            data : {
-                isiNotifikasi : isi
+        const today = new Date();
+        today.setDate(date);
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const result = await prisma.notifikasi.findMany({
+            where: {
+                created_at: {
+                    gte: yesterday,
+                    lte: tomorrow,
+                }
+            },
+            orderBy: {
+                created_at: "desc"
             }
         })
-    }catch(err) {
+        return {
+            status: true,
+            code: 200,
+            message: "OK",
+            data: result
+        }
+    } catch (err) {
+        console.log(err)
+        return {
+            status: true,
+            code: 500,
+            message: "Server Error",
+
+        }
+    }
+}
+
+export async function createNotifikasiWithLocation(isi: string, lat : number, long : number) {
+    try {
+        await prisma.notifikasi.create({
+            data: {
+                isiNotifikasi: isi,
+                lat,
+                long
+            }
+        })
+    } catch (err) {
+        console.log(err)
+
+    }
+}
+
+export async function createNotifikasi(isi: string) {
+    try {
+        await prisma.notifikasi.create({
+            data: {
+                isiNotifikasi: isi
+            }
+        })
+    } catch (err) {
         console.log(err)
 
     }
