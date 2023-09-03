@@ -2,10 +2,10 @@ import { kelurahan } from './../util/dataUtil';
 import { Pemilih } from "@prisma/client";
 import { IResult } from "../types/Iresult";
 import { IPemilih, IPemilihAdd, IPemilihMemilih, ZPemilih, ZPemilihAdd, ZPemilihMemilih } from "../types/IPemilih";
-import { addManyPemilih, delPemilih, getAllPemilih, getAllPendukung, postPemilih, putPemilih, putPemilihKandidat, selectPemilih } from "../service/pemilih";
+import { addManyPemilih, delPemilih, editPemilihNoHP, getAllPemilih, getAllPendukung, postPemilih, putPemilih, putPemilihKandidat, selectPemilih } from "../service/pemilih";
 import { z } from "zod";
 
-export async function AllPemilih(query : IPemilih, kelurahan : string) : IResult<Pemilih[]> {
+export async function AllPemilih(query : IPemilih, kelurahan : string) : IResult<{rows : Pemilih[], count : number}> {
     const validation = ZPemilih.safeParse(query)
     if(validation.success === false) {
         return {
@@ -124,4 +124,18 @@ export async function insertManyPemilih(data : IPemilihAdd[], username : string)
     }
 
     return await addManyPemilih(data, username )
+}
+
+export async function gantiNomorHP(noHP : string, nkk : string) :IResult<null> {
+    if(z.string().nonempty().safeParse(noHP).success === false) return {
+        status : false,
+        code : 400,
+        message : "Invalid No HP"
+    }
+    if(z.string().nonempty().safeParse(nkk).success === false) return {
+        status : false,
+        code : 400,
+        message : "Invalid NKK"
+    }
+    return await editPemilihNoHP(noHP, nkk)
 }

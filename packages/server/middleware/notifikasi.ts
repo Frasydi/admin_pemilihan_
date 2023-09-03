@@ -16,14 +16,14 @@ NotifikasiRout.get("/", AuthMiddleware,async(req,res) => {
     return res.status(result.code).json(result)
 })
 
-NotifikasiRout.get("/:date", AuthMiddleware, async(req,res) => {
+NotifikasiRout.get("/search", AuthMiddleware, async(req,res) => {
     if (!["super_admin"].includes((req as CustomRequest).auth.role)) return res.status(403).json({
         message: "You are not allowed to access this",
         code: 403,
         status: false
     })
     console.log(req.params.date)
-    const result = await NotifikasiByDate(parseInt(req.params.date));
+    const result = await NotifikasiByDate( req.query.tipe as string, req.query.search as string, parseInt(req.query.rows as string),parseInt(req.query.page as string));
     return res.status(result.code).json(result)
 })
 

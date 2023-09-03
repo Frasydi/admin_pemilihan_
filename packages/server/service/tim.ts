@@ -62,7 +62,7 @@ export async function pushTim(id : number, data: ITimAdd, username : string) {
             }
         })
 
-        await createNotifikasi(`Tim ${data.nama} berhasil ditambahkan oleh ${username}`)
+        await createNotifikasi("ADMIN",data.nama,`Tim ${data.nama} berhasil ditambahkan oleh ${username}`)
 
         return {
             status : true,
@@ -112,7 +112,7 @@ export async function putTim(id : number, data: ITimAdd, username : string) {
                 ...data
             }
         })
-        await createNotifikasi(`Tim ${data.nama} berhasil diubah, oleh ${username}`)
+        await createNotifikasi("ADMIN",data.nama,`Tim ${data.nama} berhasil diubah, oleh ${username}`)
 
         return {
             status : true,
@@ -202,7 +202,7 @@ export async function delTim(id : number, username : string) {
                 id
             }
         })
-        await createNotifikasi(`${username} menghapus tim ${result.nama}`)
+        await createNotifikasi("ADMIN",result.nama,`${username} menghapus tim ${result.nama}`)
         return {
             status : true,
             code : 200,

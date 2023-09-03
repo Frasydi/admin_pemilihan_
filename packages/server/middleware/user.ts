@@ -1,5 +1,5 @@
 import { Response, Router } from "express";
-import { AllUsers, Auth, Login, Register, changePassword, removeUser } from "../controller/user";
+import { AllUsers, Auth, Login, Register, changePassword, editUserName, removeUser } from "../controller/user";
 import { AuthMiddleware, CustomRequest } from "../util/auth";
 
 const UserRouter = Router()
@@ -50,7 +50,19 @@ UserRouter.get("/auth", async (req,res) => {
     return res.status(result.code).json(result)
 })
 
+UserRouter.put("/edit/:id", AuthMiddleware,async (req,res) => {
+  const result = await editUserName(parseInt(req.params.id), req.body.username)
+    return res.status(result.code).json(result)
+})
+
 UserRouter.put("/changePassword/:id", AuthMiddleware,async (req, res) => {
+    //@ts-ignore
+    if(req.auth.role !== "super_admin") return res.status(403).json({
+        message : "You are not allowed to access this",
+        code : 403,
+        status : false
+    })
+    
     const result = await changePassword(req.body, parseInt(req.params.id))
     if(result.status) {
         return res.cookie("token", "", {maxAge : 0}).status(result.code).json(result)

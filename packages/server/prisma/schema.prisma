@@ -28,6 +28,7 @@ model Pemilih {
   nkk            String 
   nama           String
   tempat_lahir String
+  tanggal_lahir String
   sts_kawin Status_Kawin
   jenis_kelamin  Jenis_Kelamin
   alamat         String
@@ -43,8 +44,9 @@ model Pemilih {
 }
 
 enum Status_Kawin {
-  SUDAH_MENIKAH
-  BELUM_MENIKAH
+  B
+  P
+  S
 
 }
 
@@ -79,10 +81,20 @@ model user {
   kelurahan String?
 }
 
+
 model notifikasi {
   id Int @id @default(autoincrement())
+  searchId String
+  tipe NotifTipe
   isiNotifikasi String 
   lat Float?
   long Float?
   created_at DateTime @default(now())
 }
+
+enum NotifTipe {
+  KANDIDAT
+  PENDUKUNG
+  ADMIN
+}
+

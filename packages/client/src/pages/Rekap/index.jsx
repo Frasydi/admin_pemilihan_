@@ -34,7 +34,7 @@ export default function Recap() {
 
     return (
         <Box>
-            <Paper elevation={2} sx={{ paddingY: 2 }} >
+            <Paper elevation={2} sx={{ paddingY: 1 }} >
                 <Grid container direction={"column"} ml={4}>
                     <Grid item>
                         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
@@ -48,8 +48,6 @@ export default function Recap() {
                     </Grid>
                     <Grid item alignSelf={"center"}>
                         <Grow in={!isLoading && !isError}>
-
-
                             <img width={300} height={200} src={`https://quickchart.io/chart?c=${encodeURIComponent(JSON.stringify(
                                 {
                                     type: 'pie',
@@ -66,21 +64,8 @@ export default function Recap() {
                         </Grow>
 
                     </Grid>
-                    <Grid item >
-                        <Typography variant="h5">
-                            Kecamatan
-                        </Typography>
-
-                        {(!isLoading && !isError) && <RekapTable data={data.countKecamatan} />}
-
-                    </Grid>
-                    <Grid item mt={3}>
-                        <Typography variant="h5">
-                            Kelurahan
-                        </Typography>
-                        {(!isLoading && !isError) && <RekapTableKelurahan data={data.countKelurahan} />}
-                    </Grid>
-                    <Grid item mt={30}>
+                    
+                    <Grid item mt={5}>
                         <Typography variant="h6">
                             Rekap dari masing-masing kandidat
                         </Typography>

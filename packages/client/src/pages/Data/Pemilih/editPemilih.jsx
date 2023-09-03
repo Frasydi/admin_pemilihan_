@@ -1,18 +1,20 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, Drawer, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Radio, RadioGroup, Select, TextField, Typography } from "@mui/material";
 import { useEffect, useMemo, useState } from "react"
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { tableHeader } from ".";
 import { dptkeys } from "./pemilihData";
 import useDPT from "./usePemilih";
 import { kelurahan } from "../../../utils/dataUtil";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 
 // eslint-disable-next-line react/prop-types
 export default function EditPemilih() {
     const dpt = useDPT()
     const [open, setOpen] = useState(false)
-    const { register, handleSubmit, setError, formState: { errors }, watch } = useForm({
+    const { control, register, handleSubmit, setError, formState: { errors }, watch } = useForm({
         mode: "onBlur",
         values: dpt.data,
         resolver: zodResolver(z.object({
@@ -20,18 +22,20 @@ export default function EditPemilih() {
             nkk: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             nama: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             alamat: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
+            tanggal_lahir: z.string(),
             tempat_lahir: z.string().nonempty(),
-            status_kawin: z.enum(["SUDAH_MENIKAH", "BELUM_MENIKAH"]),
+            sts_kawin: z.enum(["B", "P", "S"]),
             jenis_kelamin: z.enum(["L", "P"]),
             kelurahan: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             kecamatan: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             rt: z.string().nonempty("Tidak boleh Kosong").max(200, "Maksimal 200 huruf"),
             rw: z.string().nonempty("Tidak boleh Kosong").max(200, "Maksimal 200 huruf"),
-            tps: z.string().nonempty()
+            tps: z.string()
         }))
     });
 
     function submit(data) {
+        console.log(data)
         const result = dpt.edit(dpt.data.id, data)
         if (result.status === false) {
             setError("nik", { message: result.message })
@@ -75,7 +79,8 @@ export default function EditPemilih() {
                             </Typography>
                         </Grid>
                         {
-                            tableHeader.filter(el => el != "#" && el != "Aksi" && el != "kandidat").map((el, ind) => {
+                            tableHeader.filter(el => el != "#" && el != "Aksi" && el != "kandidat" && el != "No HP").map((el, ind) => {
+
                                 if (el == "Kecamatan") {
                                     return (<>
                                         <Grid item>
@@ -87,7 +92,7 @@ export default function EditPemilih() {
                                                     size="small"
                                                     error={!!errors.kecamatan}
                                                     helperText={errors.kecamatan?.message}
-                                                    defaultValue={dpt.data?.kecamatan || ""}
+                                                    defaultValue={dpt.data?.kecamatan}
                                                     {...register("kecamatan")}
                                                 >
                                                     {
@@ -115,7 +120,7 @@ export default function EditPemilih() {
                                                         size="small"
                                                         error={!!errors.kelurahan}
                                                         helperText={errors.kelurahan?.message}
-                                                        defaultValue={dpt.data?.kelurahan || ""}
+                                                        defaultValue={dpt.data?.kelurahan}
                                                         {...register("kelurahan")}
                                                     >
                                                         {
@@ -140,23 +145,39 @@ export default function EditPemilih() {
                                                         labelId="status-kawin-id"
                                                         label="Status Kawin"
                                                         size="small"
-                                                        error={!!errors.status_kawin}
-                                                        helperText={errors.status_kawin?.message}
-                                                        defaultValue={dpt.data?.status_kawin || ""}
-                                                        {...register("status_kawin")}
+                                                        error={!!errors.sts_kawin}
+                                                        defaultValue={dpt.data?.sts_kawin}
+                                                        {...register("sts_kawin")}
                                                     >
 
-                                                        <MenuItem key={"status-kawin-menikah"} value={"SUDAH_MENIKAH"}>
+                                                        <MenuItem key={"status-kawin-menikah"} value={"S"}>
                                                             Sudah Menikah</MenuItem>
-                                                        <MenuItem key={"status-kawin-belum-menikah"} value={"BELUM_MENIKAH"}>
-                                                           Belum Menikah</MenuItem>
+                                                        <MenuItem key={"status-kawin-belum-menikah"} value={"B"}>
+                                                            Belum Menikah</MenuItem>
+                                                        <MenuItem key={"status-kawin-pernah-menikah"} value={"P"}>
+                                                            Pernah Menikah</MenuItem>
+
 
 
 
                                                     </Select>
+                                                    {
+                                                        errors.sts_kawin && <Typography color="red" variant="body2">{errors.sts_kawin.message}</Typography>
+                                                    }
                                                 </FormControl>
                                             </Grid>
                                         </>
+                                    )
+                                
+                                } else if (el == "TPS") {
+                                    return (
+                                        <Grid item>
+
+                                            <TextField label={el} size="small" {...register("tps")}
+                                                error={!!errors.tps}
+                                                helperText={errors.tps?.message}
+                                            />
+                                        </Grid>
                                     )
                                 }
                                 return (

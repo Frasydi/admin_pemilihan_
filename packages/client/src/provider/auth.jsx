@@ -73,7 +73,9 @@ export default function Auth({ children }) {
             if (loc.pathname == "/login") {
                 const searchParams = new URLSearchParams(loc.search);
                 const redirect = searchParams.get('redirect');
+                setLoading(false)
                 rout(redirect != null ? redirect : "/")
+                return
             }
             setLoading(false)
             // if (user.username != defaultUser.username || user.password != defaultUser.password) {

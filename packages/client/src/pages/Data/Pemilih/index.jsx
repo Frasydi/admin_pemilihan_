@@ -37,7 +37,7 @@ export const CustomCell = styled(TableCell)`
     }
 `
 
-export const tableHeader = ["#", "NIK", "NKK", "Nama", "Alamat", "Tempat Lahir", "Status Kawin", "Jenis Kelamin", "Kecamatan", "Kelurahan", "RT", "RW", "No HP", "TPS", "kandidat", "Aksi"]
+export const tableHeader = ["#", "NIK", "NKK", "Nama", "Alamat", "Tanggal Lahir", "Tempat Lahir", "Status Kawin", "Jenis Kelamin", "Kecamatan", "Kelurahan", "RT", "RW", "No HP", "TPS", "kandidat", "Aksi"]
 export const PemilihContext = createContext({
     data: null,
     setData: () => { },
@@ -52,32 +52,21 @@ export default function DataPemilih() {
         nama: "",
         jenis_kelamin: "Semua",
         kelurahan: "",
-        kecamatan: ""
+        kecamatan: "",
+
     })
     const [rows, setRows] = useState(10)
-    const { data, isLoading, refetch } = useFetch(`/api/pemilih?${new URLSearchParams(filter)}`)
+    const [page, setPage] = useState(0);
+    const { data, isLoading, refetch } = useFetch(`/api/pemilih?${new URLSearchParams({...filter, rows, page})}`)
     const { data: data2, isLoading: isLoading2, refetch: refetch2, isError: isError2 } = useFetch("/api/kandidat?search=")
     const [input, setInput] = useState(null)
     const [selData, setSelData] = useState([])
     const [pendukungCollapse, setPendukungCollapse] = useState(false)
-    const [page, setPage] = useState(0);
     const countData = useMemo(() => {
         if (data == null) return 0;
-        return Math.ceil(data.length / 10);
+        return data.length;
     }, [data])
     const { user } = useAuth()
-    const tempData = useMemo(() => {
-        if (data == null) return []
-        if (data.length <= 0) return [];
-        const startIndex = page * 10;
-        const endIndex = startIndex + 10;
-
-        // Get the subset of data for the current page
-        const newData = data.slice(startIndex, endIndex);
-        console.log(newData);
-        return newData;
-
-    }, [data, page])
 
     async function tambahDataPemilih(data) {
         try {
@@ -108,17 +97,19 @@ export default function DataPemilih() {
             }
         }
     }
+
     function setSelected(id) {
+        console.log(id)
         setSelData(val => {
             const temp = [...val]
             if (val.includes(id)) {
                 const ind = temp.indexOf(id)
-                console.log(ind)
+                
                 temp.splice(ind, 1)
             } else {
                 temp.push(id)
             }
-            console.log(temp)
+            
             return temp
         })
     }
@@ -234,13 +225,13 @@ export default function DataPemilih() {
 
         // Generate CSV header row
         const headerKeys = Object.keys(tempData[0]);
-        const headerRow = headerKeys.join(',');
+        const headerRow = headerKeys.join(';');
         csvContent += headerRow + '\r\n';
 
         // Generate CSV data rows
         data.forEach((rowObject) => {
             const rowValues = headerKeys.map((key) => rowObject[key]);
-            const rowData = rowValues.join(',');
+            const rowData = rowValues.join(';');
             csvContent += rowData + '\r\n';
         });
 
@@ -258,8 +249,15 @@ export default function DataPemilih() {
     };
 
     useEffect(() => {
+        setPage(0)
+        setRows(10)
         refetch()
     }, [filter])
+
+    useEffect(() => {
+        refetch()
+    }, [rows, page])
+
     return (
         <>
             <Box>
@@ -310,34 +308,40 @@ export default function DataPemilih() {
                                 edit,
                                 hapus: hapusDataPemilih
                             }}>
+                                <Box sx={{overflowX :"auto"}}>
 
-                                <CustomTable >
-                                    <TableHead sx={{ backgroundColor: '#99001a' }}>
-                                        <TableRow>
-                                            <CustomCell align="center" >Select</CustomCell>
+                                    <CustomTable >
+                                        <TableHead sx={{ backgroundColor: '#99001a' }}>
+                                            <TableRow>
+                                                <CustomCell align="center" >Select</CustomCell>
+                                                {
+                                                    tableHeader.map(el => <CustomCell key={el} align="center" color="whitesmoke" >{el}</CustomCell>)
+                                                }
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
                                             {
-                                                tableHeader.map(el => <CustomCell key={el} align="center" color="whitesmoke" >{el}</CustomCell>)
+                                                isLoading === false && data?.rows.map((el, ind) => (
+                                                    <>
+                                                        <PemilihList key={ind + "ind"} sel={selData.includes(el.id)} setSelected={setSelected} el={el} ind={Math.floor((page) * 10) + ind} />
+                                                    </>
+                                                ))
                                             }
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {
-                                            isLoading === false && tempData?.map((el, ind) => (
-                                                <>
-                                                    <PemilihList key={ind + "ind"} sel={selData.includes(el.id)} setSelected={setSelected} el={el} ind={Math.floor((page ) * 10) + ind} />
-                                                </>
-                                            ))
-                                        }
-                                    </TableBody>
+                                        </TableBody>
 
-                                </CustomTable>
+                                    </CustomTable>
+                                </Box>
+
                                 <TablePagination
                                     component="div"
-                                    count={countData}
+                                    count={data?.count || 0}
                                     page={page}
                                     onPageChange={(ev, newPage) => setPage(newPage)}
                                     rowsPerPage={rows}
-                                    onRowsPerPageChange={(ev, newRows) => setRows(newRows)}
+                                    onRowsPerPageChange={(event) => {
+                                        setRows(parseInt(event.target.value, 10))
+                                        setPage(0)
+                                    }}
                                 />
                                 <EditPemilih />
                             </PemilihContext.Provider>

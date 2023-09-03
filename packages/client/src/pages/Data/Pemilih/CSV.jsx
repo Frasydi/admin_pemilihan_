@@ -6,7 +6,7 @@ import { useCSVReader } from 'react-papaparse';
 import Swal from "sweetalert2";
 import Loading from "../../../utils/Loading";
 
-const JenisKelaminEnum = z.preprocess(val => val.toUpperCase() ,z.enum(['L', 'P']));
+const JenisKelaminEnum = z.preprocess(val => val?.toUpperCase(), z.enum(['L', 'P']));
 
 const keysArray = [
     'nik',
@@ -30,15 +30,16 @@ const PemilihSchema = z.object({
     nama: z.string().nonempty(),
     tempat_lahir: z.string().nonempty(),
     sts_kawin: z.preprocess(val => {
-        return val.split(" ").join("_").toUpperCase();
-    }, z.enum(["SUDAH_MENIKAH", "BELUM_MENIKAH"])) ,
+        return val.split(" ").join("_")?.toUpperCase();
+    }, z.enum(["S", "B", "P"])),
+    tanggal_lahir : z.string(),
     jenis_kelamin: JenisKelaminEnum,
     alamat: z.string().nonempty(),
     rt: z.string().nonempty(),
     rw: z.string().nonempty(),
     kelurahan: z.string().nonempty(),
     kecamatan: z.string().nonempty(),
-    tps: z.string().nonempty(),
+    tps: z.string(),
 });
 
 
@@ -70,49 +71,74 @@ export default function AddCSVPemilih({ refetch }) {
     }, [data, page])
 
     const handleOnFileLoad = (data) => {
+        console.log("Data yang diterima")
         console.log(data)
-        const newData = data.map(({ kandidatId: _, ...data }) => {
+        const newData  = data.map(({ kandidatId: _, ...data }) => {
             try {
                 const newData = {}
                 Object.keys(data).forEach(key => {
                     const newKey = key.split(" ").join("_").toLowerCase()
                     newData[newKey] = data[key]
-                }) 
+                })
+               
                 const validation = PemilihSchema.safeParse(newData)
                 if (validation.success === false) {
-                    console.log(validation.error.issues[0].path + " : " + validation.error.issues[0].message)
+                   
                     return null
                 }
                 return validation.data
             } catch (err) {
+                
+                
                 return null
             }
         }).filter(el => el != null)
-        console.log(newData)
+        // console.log(newData)
         if (newData.length == 0) {
             return setError("Sepertinya Data tidak valid atau kosong")
         }
+        
         setError(null)
         setData(newData)
+    }
+
+    async function sendData(data) {
+        const fetData = await fetch("/api/pemilih/many", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data),
+        })
+        return fetData
     }
 
     async function submitData() {
         try {
             setOpen(false)
-            Loading.fire()
-           
-            const fetData = await fetch("/api/pemilih/many", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data),
-            })
-            const json = await fetData.json()
-            if (fetData.ok === false) return Swal.fire("Error", json.message, "error")
+            let skip = 0
+            let takes = 50000
+            let success = 0
+            const lengthData = Math.ceil(data.length/takes)
+            while(data.slice(skip, takes).length > 0) {
+                try {
+                    Loading.fire({text : `${success} dari ${lengthData} bagian telah selesai`})
+                    const result = await sendData(data.slice(skip, takes))
+                    if(result.status >= 400) throw new Error("Cant send data")
+                    success++;
+                    
+                }catch(err) {
+                    console.error(err)
+                } finally {
+                    skip+= 50000
+                    takes += 50000
+                }
+            }
+
+            if (success == 0) return Swal.fire("Error", "Tidak ada yang selesai", "error")
             refetch()
 
-            return Swal.fire("Berhasil", json.message, "success")
+            return Swal.fire("Berhasil", "", "success")
         } catch (err) {
             console.log(err)
             Swal.fire("Error", "Server Error", "error")
@@ -147,7 +173,8 @@ export default function AddCSVPemilih({ refetch }) {
                             handleOnFileLoad(results.data)
                         }}
                         config={{
-                            header: true
+                            header: true,
+                            skipEmptyLines: true,
                         }}
                     >
                         {({

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { IResult } from "../types/Iresult";
 import { getNotifikasi, getNotifikasiByDate } from "../service/Notifikasi";
-import { notifikasi } from "@prisma/client";
+import { NotifTipe, notifikasi } from "@prisma/client";
 
 
 export async function findNotifikasi() :IResult<notifikasi[]>{
@@ -10,13 +10,35 @@ export async function findNotifikasi() :IResult<notifikasi[]>{
 
 }
 
-export async function NotifikasiByDate(date : number) : IResult<notifikasi[]> {
-    if(!z.number().int().safeParse(date).success) {
+export async function NotifikasiByDate( tipe : String, search : string, rows : number, page : number) : IResult<{notifs : notifikasi[], _count : number}> {
+    
+    if(z.enum(["ADMIN" , "KANDIDAT" , "PENDUKUNG"]).safeParse(tipe).success == false) {
         return {
             status : false,
             code : 400,
-            message : "Date is not a number"
+            message : "Tipe Notif is not an valid type"
         }
     }
-    return getNotifikasiByDate(date)
+    if(z.string().safeParse(search).success === false)  {
+        return {
+            status : false,
+            code : 400,
+            message : "Search is empty or not valid type"
+        }
+    }
+    if(z.number().nonnegative().safeParse(rows).success == false) {
+        return {
+            status : false, 
+            code : 400,
+            message : "Rows is empty or not valid type"
+        }
+    }
+    if(z.number().nonnegative().safeParse(page).success == false) {
+        return {
+            status : false, 
+            code : 400,
+            message : "Page is empty or not valid type"
+        }
+    }
+    return getNotifikasiByDate( tipe as NotifTipe, search, rows, page )
 }

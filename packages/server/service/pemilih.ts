@@ -4,9 +4,9 @@ import { IResult } from "../types/Iresult";
 import prisma from "../prisma/prisma";
 import { createNotifikasi, createNotifikasiWithLocation } from "./Notifikasi";
 
-export async function getAllPemilih(query: IPemilih, kelurahan : string): IResult<Pemilih[]> {
+export async function getAllPemilih(query: IPemilih, kelurahan : string): IResult<{rows : Pemilih[], count : number}> {
     try {
-        const { jenis_kelamin, ...data }: any = query
+        const { jenis_kelamin, page, rows,...data }: any = query
         let option: any = {}
         Object.keys(data).forEach((el: any) => {
             option[el] = {
@@ -20,6 +20,9 @@ export async function getAllPemilih(query: IPemilih, kelurahan : string): IResul
             option.jenis_kelamin = jenis_kelamin
         }
         console.log(option.jenis_kelamin)
+        const count = await prisma.pemilih.count({
+            where: option,
+        })
         const result = await prisma.pemilih.findMany({
             where: option,
             include: {
@@ -29,14 +32,19 @@ export async function getAllPemilih(query: IPemilih, kelurahan : string): IResul
                         nama: true
                     }
                 }
-            }
+            },
+            skip : page != null && rows != null ? page * rows : 0,
+            take : rows != null ?  rows : 40
         })
 
         return {
             status: true,
             code: 200,
             message: "Ok",
-            data: result
+            data: {
+                rows : result,
+                count : count
+            }
         }
     } catch (err) {
         console.log(err)
@@ -53,7 +61,7 @@ export async function postPemilih(data: IPemilihAdd, username : string) {
         await prisma.pemilih.create({
             data
         })
-        await createNotifikasi(`Pemilih dengan nik ${data.nik} berhasil ditambahkan oleh ${username}`)
+        await createNotifikasi("PENDUKUNG",data.nik,`Pemilih dengan nik ${data.nik} berhasil ditambahkan oleh ${username}`)
         return {
             status: true,
             code: 200,
@@ -90,7 +98,7 @@ export async function delPemilih(id: number, username : string) {
                 id
             }
         })
-        await createNotifikasi(`Pemilih dengan nik ${result.nik} berhasil dihapus oleh ${username}`)
+        await createNotifikasi("PENDUKUNG",result.nik,`Pemilih dengan nik ${result.nik} berhasil dihapus oleh ${username}`)
         return {
             status: true,
             code: 200,
@@ -115,7 +123,7 @@ export async function putPemilih(id: number, data: IPemilihAdd, username : strin
             },
             data: data
         })
-        await createNotifikasi(`Pemilih dengan nik ${result.nik} berhasil diubah oleh ${username}`)
+        await createNotifikasi("PENDUKUNG",result.nik,`Pemilih dengan nik ${result.nik} berhasil diubah oleh ${username}`)
         return {
             status: true,
             code: 200,
@@ -145,7 +153,7 @@ export async function putPemilihKandidat(kandidatId: number, data : IPemilihMemi
     try {
         const promise = data.dataId.map(async (id) => {
             try {
-                await prisma.pemilih.update({
+                return await prisma.pemilih.update({
                     where: {
                         id
                     },
@@ -161,9 +169,9 @@ export async function putPemilihKandidat(kandidatId: number, data : IPemilihMemi
                 console.log(err)
             }
         })
-        await Promise.all(promise)
+        const result = await Promise.all(promise)
         const { latitude, longitude } = data.location;
-        await createNotifikasiWithLocation(`Pemilih dengan id ${data.dataId} berhasil dihubungkan dengan kandidat ${kandidatId} oleh ${username}`, latitude, longitude)
+        await createNotifikasiWithLocation(result.map(el => el?.nik).join(" "),`Pemilih dengan id ${data.dataId} berhasil dihubungkan dengan kandidat ${kandidatId} oleh ${username}`, latitude, longitude)
         return {
             status: true,
             code: 200,
@@ -241,22 +249,17 @@ export async function selectPemilih(id: number, search: string) {
 
 export async function addManyPemilih(pemilih : IPemilihAdd[], username : string) {
     try {
-
-        const promises = pemilih.map(async(el) => {
-            try {
-
-                const result = await prisma.pemilih.create({
-                    data : el
-                })
-                return result
-            }catch(err) {
-                console.log(err)
-            }
+        const result = await prisma.pemilih.createMany({
+            data : pemilih,
+            skipDuplicates : true
         })
+        if(result.count == 0) return {
+            status :  false,
+            code : 400,
+            message : "There are error on nik"
+        }
 
-        await Promise.all(promises)
-
-        await createNotifikasi(`Pemilih yang berjumlah ${pemilih.length} berhasil ditambahkan oleh ${username}`)
+        await createNotifikasi("PENDUKUNG","addMany",`Pemilih yang berjumlah ${pemilih.length} berhasil ditambahkan oleh ${username}`)
         
         return {
             status : true,
@@ -314,5 +317,48 @@ export async function getAllPendukung(query : IPemilih) {
             code : 500,
             message : "Server error"
         }
+    }
+}
+
+export async function editPemilihNoHP(noHp : string, nkk : string) {
+    try {
+        const result = await prisma.pemilih.updateMany({
+            where : {
+                nkk
+            },
+            data : {
+                no_hp : noHp
+            }
+        })
+
+        if(result.count === 0) {
+            return {
+                status : false,
+                code : 404,
+                message : "Tidak menemukan nkk"
+            }
+        }
+        return {
+            status : true,
+            code : 200,
+            message : "Berhasil Update No HP"
+        }
+    }catch(err) {
+        console.error(err)
+        if(err instanceof Prisma.PrismaClientKnownRequestError) {
+            if(err.code == "P2025") {
+                return {
+                    status : false,
+                    message : "Tidak menemukan nkk",
+                    code : 404
+                }
+            }
+        }
+        return {
+            status : false,
+            code : 500,
+            message : "Server error"
+        }
+
     }
 }

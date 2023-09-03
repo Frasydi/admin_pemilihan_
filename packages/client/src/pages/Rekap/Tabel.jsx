@@ -29,6 +29,7 @@ const CustomCell = styled(TableCell)`
 
 
 export default function RekapTable({ data }) {
+    
     return (
         <Box sx={{width:"75vw", overflow:"auto"}}>
 

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { AllPemilih, AllPendukung, addPemilih, changePemilihKandidat, editPemilih, insertManyPemilih, mencariPemilih, removePemilih } from "../controller/pemilih";
+import { AllPemilih, AllPendukung, addPemilih, changePemilihKandidat, editPemilih, gantiNomorHP, insertManyPemilih, mencariPemilih, removePemilih } from "../controller/pemilih";
 import { AuthMiddleware, CustomRequest } from "../util/auth";
 
 const PemilihRouter = Router()
@@ -86,6 +86,16 @@ PemilihRouter.get("/pendukung", AuthMiddleware, async (req, res) => {
         status: false
     })
     const result = await AllPendukung(req.query as any)
+    return res.status(result.code).json(result)
+})
+
+PemilihRouter.put("/noHp/:nkk", AuthMiddleware, async (req, res) => {
+    if (!["super_admin", "pemilihan_admin"].includes((req as CustomRequest).auth.role)) return res.status(403).json({
+        message: "You are not allowed to access this",
+        code: 403,
+        status: false
+    })
+    const result = await gantiNomorHP(req.body.noHP,req.params.nkk )
     return res.status(result.code).json(result)
 })
 

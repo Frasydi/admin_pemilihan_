@@ -8,6 +8,8 @@ export const ZPemilih = z.object({
     kelurahan : z.string(),
     kecamatan : z.string(),
     kandidatId : z.preprocess((val : any) => parseInt(val), z.number().int().optional()).optional(),
+    page : z.preprocess((el : any) => parseInt(el), z.number().nonnegative().optional()).optional() ,
+    rows : z.preprocess((el : any) => parseInt(el), z.number().nonnegative().optional()).optional()
 })
 
 export type IPemilih = z.infer<typeof ZPemilih>
@@ -17,15 +19,17 @@ export const ZPemilihAdd = z.object({
     nik : z.string().nonempty(),
     nama : z.string().nonempty(),
     alamat : z.string().nonempty(),
+    tanggal_lahir : z.string().nonempty(),
     tempat_lahir : z.string().nonempty(),
-    sts_kawin : z.enum(["SUDAH_MENIKAH", "BELUM_MENIKAH"]),
+    sts_kawin : z.enum(["S", "B", "P"]),
     jenis_kelamin : z.enum(["L", "P"]),
     kelurahan : z.string().nonempty(),
     kecamatan : z.string().nonempty(),
     rt : z.string().nonempty(),
     rw : z.string().nonempty(),
     tps : z.string(),
-    no_hp : z.string().optional()
+    no_hp : z.string().optional(),
+    
 })
 
 export const ZPemilihMemilih = z.object({

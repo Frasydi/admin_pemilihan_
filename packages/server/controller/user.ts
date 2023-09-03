@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { LoginUser, RegisterUser, changeUserPassword, delUser, getAllUsers } from "../service/user";
+import { LoginUser, RegisterUser, changeUserPassword, delUser, editUser, getAllUsers } from "../service/user";
 import { verifyToken } from "../util/jwt";
 import { IUser, IUserNewPassword, IuserAdd, ZUserNewPassword, Zuser, ZuserAdd } from "../types/IUser";
 import { IResult } from "../types/Iresult";
@@ -112,4 +112,19 @@ export async function removeUser(id : number, userId : number) : IResult<null> {
 
     return await delUser(id, userId)
 
+}
+
+export async function editUserName(userId : number, username : string) : IResult<null> {
+    if(z.number().nonnegative().int().safeParse(userId).success === false) return {
+        status : false,
+        code : 400,
+        message : "Invalid id"
+    }
+    if(z.string().nonempty().safeParse(username).success === false) return {
+        status : false,
+        code : 400,
+        message : "Invalid username"
+    }
+
+    return await editUser(userId, username)
 }

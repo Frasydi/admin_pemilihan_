@@ -13,7 +13,9 @@ export default function PemilihList({ el, ind, setSelected, sel }) {
                 backgroundColor : "#DEDEDE"
             }
         }}>
-            <CustomCell > <Checkbox checked={sel} onChange={() => setSelected(el.id)} inputProps={{ 'aria-label': 'controlled' }} /></CustomCell>
+            <CustomCell > <Checkbox checked={sel} onChange={() => {
+                
+                setSelected(el.id)}} inputProps={{ 'aria-label': 'controlled' }} /></CustomCell>
             <CustomCell > {ind + 1}</CustomCell>
             {
 
@@ -33,6 +35,7 @@ export default function PemilihList({ el, ind, setSelected, sel }) {
                 <Grid container>
                     <Grid item>
                         <Button size="small" onClick={() => {
+                            console.log(el)
                             dpt.setData({ id: ind, ...el })
                         }}>
                             Edit

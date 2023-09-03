@@ -55,11 +55,11 @@ export async function pushAnggota(id : number, data : number[], username : strin
             pemilih_id : el,
             tim_id : id
         }))
-        await prisma.anggota_Tim.createMany({
+        const hasil = await prisma.anggota_Tim.createMany({
             data : newData
         })
 
-        createNotifikasi(`${username} menambahkan ${data.length} anggota pada tim ${id}`)
+        createNotifikasi("ADMIN",id.toString(),` menambahkan ${data.length} anggota pada tim ${id}`)
 
         return {
             status : true,
@@ -88,7 +88,7 @@ export async function delAnggota(data : number[], username : string) {
         })
         await Promise.all(promise)
 
-        await createNotifikasi(`${username} menghapus ${data.length} anggota pada tim ${data[0]}`)
+        await createNotifikasi("ADMIN",data[0].toString(),`${username} menghapus ${data.length} anggota pada tim ${data[0]}`)
 
         return {
             status : true,

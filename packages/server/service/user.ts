@@ -209,3 +209,28 @@ export async function delUser(id : number, userId : number) {
         }
     }
 }
+
+export async function editUser(userId : number, username : string) {
+    try {
+        await prisma.user.update({
+            where : {
+                id : userId
+            },
+            data : {
+                username
+            }
+        })
+        return {
+            status : true,
+            code : 200,
+            message : "Berhasil"
+        }
+    }catch(err) {
+        console.log(err)
+        return {
+            status : false,
+            code : 500,
+            message : "Server Error"
+        }
+    }
+}

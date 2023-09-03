@@ -1,3 +1,4 @@
+import { NotifTipe } from "@prisma/client";
 import prisma from "../prisma/prisma";
 
 export async function getNotifikasi() {
@@ -37,30 +38,36 @@ export async function getNotifikasi() {
     }
 }
 
-export async function getNotifikasiByDate(date: number) {
+export async function getNotifikasiByDate(tipe: NotifTipe, search: string = "", rows: number, page: number) {
     try {
-        const today = new Date();
-        today.setDate(date);
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
+        const count = await prisma.notifikasi.count({
+            where: {
+
+                searchId: {
+                    contains: search
+                },
+                tipe: tipe
+            }
+        })
         const result = await prisma.notifikasi.findMany({
             where: {
-                created_at: {
-                    gte: yesterday,
-                    lte: tomorrow,
-                }
+
+                searchId: {
+                    contains: search
+                },
+                tipe: tipe
             },
             orderBy: {
                 created_at: "desc"
-            }
+            },
+            skip: page * rows,
+            take: rows,
         })
         return {
             status: true,
             code: 200,
             message: "OK",
-            data: result
+            data: {notifs : result, _count : count}
         }
     } catch (err) {
         console.log(err)
@@ -73,13 +80,15 @@ export async function getNotifikasiByDate(date: number) {
     }
 }
 
-export async function createNotifikasiWithLocation(isi: string, lat : number, long : number) {
+export async function createNotifikasiWithLocation(searchId: string, isi: string, lat: number, long: number) {
     try {
         await prisma.notifikasi.create({
             data: {
                 isiNotifikasi: isi,
                 lat,
-                long
+                long,
+                tipe: "PENDUKUNG",
+                searchId: searchId
             }
         })
     } catch (err) {
@@ -88,11 +97,13 @@ export async function createNotifikasiWithLocation(isi: string, lat : number, lo
     }
 }
 
-export async function createNotifikasi(isi: string) {
+export async function createNotifikasi(tipe: NotifTipe, searchId: string, isi: string) {
     try {
         await prisma.notifikasi.create({
             data: {
-                isiNotifikasi: isi
+                isiNotifikasi: isi,
+                tipe,
+                searchId
             }
         })
     } catch (err) {

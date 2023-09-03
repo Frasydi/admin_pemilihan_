@@ -1,28 +1,36 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, Drawer, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Radio, RadioGroup, Select, TextField, Typography } from "@mui/material";
-import { useMemo, useState } from "react"
-import { useForm } from "react-hook-form";
+import { useEffect, useMemo, useState } from "react"
+import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { tableHeader } from ".";
 import { dptkeys } from "./pemilihData";
 import { kelurahan } from "../../../utils/dataUtil";
-
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
+dayjs.locale('en');
 // eslint-disable-next-line react/prop-types
 export default function TambahPemilih({ tambah }) {
 
     const [open, setOpen] = useState(false)
-    const { register, setError, handleSubmit, formState: { errors }, watch, reset } = useForm({
+    const { control, register, setError, handleSubmit, formState: { errors }, watch, reset } = useForm({
         mode: "onBlur",
         defaultValues: {
-            jenis_kelamin: "L"
+            jenis_kelamin: "L",
+
         },
         resolver: zodResolver(z.object({
             nik: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             nkk: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             nama: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             alamat: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
+            tanggal_lahir: z.date().refine((value) => value instanceof Date, {
+                message: 'Please select a valid date',
+            }),
             tempat_lahir: z.string().nonempty(),
-            sts_kawin: z.enum(["SUDAH_MENIKAH", "BELUM_MENIKAH"]),
+            sts_kawin: z.enum(["B", "P", "S"]),
             jenis_kelamin: z.enum(["L", "P"]),
             kelurahan: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
             kecamatan: z.string().nonempty("Tidak boleh kosong").max(200, "Maksimal 200 huruf"),
@@ -33,18 +41,23 @@ export default function TambahPemilih({ tambah }) {
     });
 
     async function submit(data) {
-        const result = await tambah(data)
-            console.log(result)
-            if (!result.status) {
-                setError("nik", { message: result.message })
-                return
-            }
-            setOpen(false)
-            reset()
+        const tanggal = data.tanggal_lahir
+        console.log({ ...data, tanggal_lahir: (tanggal.getDate() + 1) + "|" + (tanggal.getMonth() + 1) + "|" + tanggal.getFullYear() })
+
+
+        const result = await tambah({ ...data, tanggal_lahir: (tanggal.getDate() + 1) + "|" + (tanggal.getMonth() + 1) + "|" + tanggal.getFullYear() })
+        console.log(result)
+        if (!result.status) {
+            setError("nik", { message: result.message })
+            return
+        }
+        setOpen(false)
+        reset()
 
 
     }
 
+ 
     const watchKecamatan = watch("kecamatan")
     const kelurahan2 = useMemo(() => {
         const indexOf = kelurahan.findIndex(el => el.kecamatan == watchKecamatan);
@@ -74,7 +87,7 @@ export default function TambahPemilih({ tambah }) {
                             </Typography>
                         </Grid>
                         {
-                            tableHeader.filter(el => el != "#" && el != "Aksi" && el != "kandidat").map((el, ind) => {
+                            tableHeader.filter(el => el != "#" && el != "Aksi" && el != "kandidat" && el != "No HP").map((el, ind) => {
 
                                 if (el == "Kecamatan") {
                                     return (<>
@@ -140,23 +153,66 @@ export default function TambahPemilih({ tambah }) {
                                                         labelId="status-kawin-id"
                                                         label="Status Kawin"
                                                         size="small"
-                                                        error={!!errors.status_kawin}
-                                                        helperText={errors.status_kawin?.message}
+                                                        error={!!errors.sts_kawin}
 
                                                         {...register("sts_kawin")}
                                                     >
 
-                                                        <MenuItem key={"status-kawin-menikah"} value={"SUDAH_MENIKAH"}>
+                                                        <MenuItem key={"status-kawin-menikah"} value={"S"}>
                                                             Sudah Menikah</MenuItem>
-                                                        <MenuItem key={"status-kawin-belum-menikah"} value={"BELUM_MENIKAH"}>
+                                                        <MenuItem key={"status-kawin-belum-menikah"} value={"B"}>
                                                             Belum Menikah</MenuItem>
+                                                        <MenuItem key={"status-kawin-pernah-menikah"} value={"P"}>
+                                                            Pernah Menikah</MenuItem>
 
 
 
                                                     </Select>
+                                                    {
+                                                        errors.sts_kawin && <Typography color="red" variant="body2">{errors.sts_kawin.message}</Typography>
+                                                    }
                                                 </FormControl>
                                             </Grid>
                                         </>
+                                    )
+                                } else if (el == "Tanggal Lahir") {
+                                    return (
+                                        <>
+                                            <Grid item>
+                                                <Controller
+                                                    name="tanggal_lahir"
+                                                    control={control}
+
+                                                    render={
+                                                        ({ field: { onChange, ...restField } }) =>
+                                                            <DatePicker
+                                                                label="Tanggal Lahir"
+                                                                onChange={(event) => {
+                                                                    onChange(event.toDate());
+                                                                }}
+                                                                renderInput={(params) =>
+                                                                    <TextField
+                                                                        {...params}
+                                                                    />}
+                                                                {...restField}
+                                                            />
+                                                    }
+                                                />
+                                            </Grid>
+                                            {
+                                                errors.tanggal_lahir != null && <Typography variant="body2" color="red">{errors.tanggal_lahir?.message}</Typography>
+                                            }
+                                        </>
+                                    )
+                                } else if (el == "TPS") {
+                                    return (
+                                        <Grid item>
+
+                                            <TextField label={el} size="small" {...register("tps")}
+                                                error={!!errors.tps}
+                                                helperText={errors.tps?.message}
+                                            />
+                                        </Grid>
                                     )
                                 }
                                 return (

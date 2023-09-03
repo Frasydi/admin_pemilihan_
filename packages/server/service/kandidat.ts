@@ -66,7 +66,7 @@ export async function postKandidat(data: IKandidatAdd, image: string | null, use
             data: data2
         })
 
-        await createNotifikasi(`Kandidat ${result.nama} berhasil ditambahkan, oleh ${username}`)
+        await createNotifikasi("KANDIDAT",result.nik,`Kandidat ${result.nama} berhasil ditambahkan, oleh ${username}`)
 
         return {
             code: 200,
@@ -108,7 +108,7 @@ export async function putKandidat(id: number, data: IKandidatAdd, gambar: string
             data: data2
         })
 
-        await createNotifikasi(`Kandidat ${fet.nama} berhasil diubah, oleh ${username}`)
+        await createNotifikasi("KANDIDAT", fet.nik,`Kandidat ${fet.nama} berhasil diubah, oleh ${username}`)
 
         return {
             status: false,
@@ -186,7 +186,7 @@ export async function delKandidat(id: number, username : string) {
         })
         deleteFile(result.gambar || "")
 
-        await createNotifikasi(`Kandidat ${result.nama} berhasil dihapus, oleh ${username}`)
+        await createNotifikasi("KANDIDAT",result.nik,`Kandidat ${result.nama} berhasil dihapus, oleh ${username}`)
         return {
             status: true,
             code: 200,
